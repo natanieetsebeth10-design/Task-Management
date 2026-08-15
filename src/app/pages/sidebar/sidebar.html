@@ -1,0 +1,56 @@
+<div class="sidebar" [class.open]="isOpen">
+
+  <a (click)="toggle()">
+    <img src="assets/logo1.png" alt="Dashboard banner" class="hero-image">
+  </a>
+
+  <div class="sidebar-divider"></div>
+
+  <div class="sidebar-section-label">General</div>
+  <div class="sidebar-buttons">
+    <button (click)="navigate('/create-task')">
+      <span class="btn-icon"></span> Create Task
+    </button>
+    <button (click)="navigate('/view-tasks')">
+      <span class="btn-icon"></span> View Tasks
+    </button>
+    <button (click)="navigate('/my-performance')">
+      <span class="btn-icon"></span> My Performance
+    </button>
+  </div>
+
+  <ng-container *ngIf="isAdmin">
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">Admin</div>
+    <div class="sidebar-buttons">
+      <button (click)="navigate('/add-user')">
+        <span class="btn-icon"></span> Create User
+      </button>
+      <button (click)="navigate('/admin-board')">
+        <span class="btn-icon"></span> Admin Board
+      </button>
+      <button (click)="navigate('/reports')">
+        <span class="btn-icon"></span> Reports
+      </button>
+      <button (click)="navigate('/task-search')">
+        <span class="btn-icon"></span> Task Search
+      </button>
+      <button (click)="navigate('/admin-performance')">
+        <span class="btn-icon"></span> My Admin Stats
+      </button>
+    </div>
+  </ng-container>
+
+  <div class="sidebar-divider"></div>
+
+  <div class="sidebar-section-label">Account</div>
+  <div class="sidebar-buttons">
+    <button (click)="navigate('/notifications')">
+      <span class="btn-icon"></span> Notifications
+    </button>
+    <button (click)="navigate('/settings')">
+      <span class="btn-icon"></span> Settings
+    </button>
+  </div>
+
+</div>

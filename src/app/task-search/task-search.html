@@ -1,0 +1,178 @@
+<div class="admin-calendar">
+
+  <div class="page-header">
+    <button class="back-btn" (click)="goBack()">← Back</button>
+    <h3>🔍 Task Overview</h3>
+  </div>
+
+  <!-- SEARCH FILTERS -->
+  <div class="controls-bar">
+
+    <div class="control-group">
+      <label class="control-label">Task ID</label>
+      <input
+        class="control-input"
+        type="text"
+        [(ngModel)]="searchTaskId"
+        placeholder="e.g. TASK-0001"
+      />
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">Assignee Name</label>
+      <input
+        class="control-input"
+        type="text"
+        [(ngModel)]="searchAssignee"
+        placeholder="Search by name..."
+      />
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">Status</label>
+      <select class="control-select" [(ngModel)]="searchStatus">
+        <option *ngFor="let s of statusOptions" [value]="s">
+          {{ s === 'all' ? 'All Statuses' : s | titlecase }}
+        </option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">Due From</label>
+      <input class="control-input" type="date" [(ngModel)]="searchDateFrom" />
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">Due To</label>
+      <input class="control-input" type="date" [(ngModel)]="searchDateTo" />
+    </div>
+
+    <div class="control-group control-actions">
+      <button class="btn-apply" (click)="applyFilters()">🔍 Search</button>
+      <button class="btn-clear" (click)="clearFilters()">✕ Clear</button>
+    </div>
+
+  </div>
+
+  <!-- RESULTS COUNT -->
+  <div class="results-count">
+    Showing <strong>{{ filteredTasks.length }}</strong> of
+    <strong>{{ allTasks.length }}</strong> tasks
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading-text" *ngIf="loading">Loading tasks...</div>
+
+  <!-- TASKS TABLE -->
+  <table class="calendar-table" *ngIf="!loading">
+    <thead>
+      <tr>
+        <th>Task ID</th>
+        <th>Details</th>
+        <th>Assignee</th>
+        <th>Urgency</th>
+        <th>Status</th>
+        <th>Start Date</th>
+        <th>Due Date</th>
+        <th>Duration</th>
+        <th>Rejects</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let task of pagedTasks" class="leaderboard-row">
+
+        <td>
+          <div class="task-number">{{ task.taskNumber ?? '—' }}</div>
+        </td>
+
+        <td>
+          <div class="task-title">{{ task.details }}</div>
+          <div class="task-sub">by {{ task.assigner ?? '—' }}</div>
+        </td>
+
+        <td>
+          <div class="assignee-name">
+            <div class="assignee-avatar">
+              {{ (task.assigneeName ?? getAssigneeName(task.assigneeId ?? ''))[0]?.toUpperCase() }}
+            </div>
+            {{ task.assigneeName ?? getAssigneeName(task.assigneeId ?? '') }}
+          </div>
+        </td>
+
+        <td style="text-align:center;">
+          <span class="urgency-badge urgency-{{ task.urgency }}">
+            {{ task.urgency | titlecase }}
+          </span>
+        </td>
+
+        <td style="text-align:center;">
+          <span class="status-badge" [ngClass]="getStatusClass(task.status)">
+            {{ task.status | titlecase }}
+          </span>
+        </td>
+
+        <td style="text-align:center;">
+          <div class="date-cell">{{ task.startDate ?? '—' }}</div>
+        </td>
+
+        <td style="text-align:center;">
+          <div class="date-cell" [class.overdue]="isOverdue(task)">
+            {{ task.dueDate ?? '—' }}
+            <span *ngIf="isOverdue(task)" class="overdue-tag">Overdue</span>
+          </div>
+        </td>
+
+        <td style="text-align:center;">
+          <div class="duration-cell">{{ task.duration ?? '—' }}h</div>
+        </td>
+
+        <td style="text-align:center;">
+          <div class="reject-count" [class.has-rejects]="(task.rejectCount ?? 0) > 0">
+            {{ task.rejectCount ?? 0 }}
+          </div>
+        </td>
+
+      </tr>
+
+      <tr *ngIf="filteredTasks.length === 0 && !loading">
+        <td colspan="9">
+          <div class="empty-state">
+            🔍 No tasks found matching your search.
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- PAGINATION -->
+  <div class="pagination-bar" *ngIf="!loading && filteredTasks.length > 0">
+
+    <div class="page-size-control">
+      <label class="control-label">Rows per page</label>
+      <select class="control-select small" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+        <option *ngFor="let s of pageSizeOptions" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+
+    <div class="page-info">
+      {{ (currentPage - 1) * pageSize + 1 }}–{{ Math.min(currentPage * pageSize, filteredTasks.length) }}
+      of {{ filteredTasks.length }}
+    </div>
+
+    <div class="page-controls">
+      <button class="page-btn" (click)="goToPage(1)" [disabled]="currentPage === 1">«</button>
+      <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">‹</button>
+      <button
+        class="page-btn"
+        *ngFor="let p of pageNumbers"
+        [class.active-page]="p === currentPage"
+        (click)="goToPage(p)"
+      >{{ p }}</button>
+      <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">›</button>
+      <button class="page-btn" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages">»</button>
+    </div>
+
+  </div>
+
+</div>

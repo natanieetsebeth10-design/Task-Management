@@ -1,0 +1,92 @@
+.login-page {
+  font-family: "Poppins", sans-serif;
+  min-height: 100vh;
+  background: #e6ebfa; /* soft pastel blue-purple background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-container {
+  max-width: 400px;
+  width: 100%;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.95); /* soft white overlay */
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.login-container h2 {
+  font-size: 32px;
+  color: #8fa3e6; /* pastel blue-purple heading */
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: #ff6f91; /* soft red-pink for errors, gentle pastel feel */
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  border-radius: 12px;
+  border: none;
+  background: #f3f3ff; /* very light pastel blue input */
+  transition: all 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  background: #e0e6ff; /* slightly darker pastel blue for focus */
+  box-shadow: 0 0 0 2px #a5b5f0; /* soft pastel blue-purple glow */
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #8fa3e6, #a5b5f0); /* pastel blue-purple gradient */
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.password-group {
+  position: relative;
+}
+
+.password-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.password-wrapper input {
+  flex: 1;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 18px;
+  color: #6b7280; /* subtle pastel gray for icon */
+}

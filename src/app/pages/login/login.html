@@ -1,0 +1,26 @@
+<div class="login-page">
+  <div class="login-container">
+    <h2>SKDL</h2>
+
+    <p *ngIf="error" class="error-message">{{ error }}</p>
+
+    <form (ngSubmit)="login()">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="email" name="email" required>
+      </div>
+
+      <div class="form-group password-group">
+        <label>Password</label>
+        <div class="password-wrapper">
+          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" required>
+          <span class="toggle-password" (click)="togglePassword()">
+            {{ showPassword ? '👁️' : '🙈' }}
+          </span>
+        </div>
+      </div>
+
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</div>

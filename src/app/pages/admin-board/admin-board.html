@@ -1,0 +1,127 @@
+<div class="admin-calendar">
+
+  <div class="page-header">
+    <button class="back-btn" (click)="goBack()">← Back</button>
+    <h3>Admin Task Board</h3>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="calendar-layout">
+
+    <!-- LEFT: calendar -->
+    <div class="calendar-main">
+
+      <div class="week-controls">
+        <button (click)="prevWeek()">Prev Week</button>
+        <button (click)="currentWeek()">Current Week</button>
+        <button (click)="nextWeek()">Next Week</button>
+      </div>
+
+      <table class="calendar-table">
+        <thead>
+          <tr>
+            <th>Status \ Day</th>
+            <th *ngFor="let day of weekDays">{{ day | date:'EEE d/M' }}</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Rejected -->
+          <tr>
+            <td>Rejected</td>
+            <td *ngFor="let day of weekDays">
+              <ng-container *ngFor="let task of rejectedTasksByDay[datePipe.transform(day,'yyyy-MM-dd')!] || []">
+                <div class="task-card">
+                  <div class="task-title">{{ task.details }}</div>
+                  <div>Assignee: {{ task.assigneeName }}</div>
+                  <div>Urgency: {{ task.urgency }}</div>
+                  <div class="task-actions">
+                    <button (click)="reassignTask(task)">Reassign</button>
+                  </div>
+                </div>
+              </ng-container>
+            </td>
+          </tr>
+
+          <!-- Submitted -->
+          <tr>
+            <td>Submitted</td>
+            <td *ngFor="let day of weekDays">
+              <ng-container *ngFor="let task of submittedTasksByDay[datePipe.transform(day,'yyyy-MM-dd')!] || []">
+                <div class="task-card">
+                  <div class="task-title">{{ task.details }}</div>
+                  <div>Assignee: {{ task.assigneeName }}</div>
+                  <div>Urgency: {{ task.urgency }}</div>
+                  <div class="task-actions">
+                    <button (click)="approveTask(task)">Approve</button>
+                    <button (click)="rejectTask(task)">Reject</button>
+                  </div>
+                </div>
+              </ng-container>
+            </td>
+          </tr>
+
+          <!-- Completed -->
+          <tr>
+            <td>Completed</td>
+            <td *ngFor="let day of weekDays">
+              <ng-container *ngFor="let task of completedTasksByDay[datePipe.transform(day,'yyyy-MM-dd')!] || []">
+                <div class="task-card">
+                  <div class="task-title">{{ task.details }}</div>
+                  <div>Assignee: {{ task.assigneeName }}</div>
+                  <div>Urgency: {{ task.urgency }}</div>
+                  <div>Status: Completed</div>
+                </div>
+              </ng-container>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- RIGHT: overdue panel -->
+    <div class="overdue-panel">
+
+      <div class="overdue-panel-header">
+        <span class="overdue-panel-icon"></span>
+        <div>
+          <div class="overdue-panel-title">Overdue Tasks</div>
+          <div class="overdue-panel-date">As of {{ today | date:'MMM d, y' }}</div>
+        </div>
+        <span class="overdue-count" *ngIf="overdueTasks.length > 0">
+          {{ overdueTasks.length }}
+        </span>
+      </div>
+
+      <div class="overdue-empty" *ngIf="overdueTasks.length === 0">
+        ✅ No overdue tasks!
+      </div>
+
+      <div class="overdue-task-card" *ngFor="let task of overdueTasks">
+        <div class="overdue-task-top">
+          <div class="overdue-task-title">{{ task.details }}</div>
+          <div class="overdue-days-badge">{{ getDaysOverdue(task) }}d overdue</div>
+        </div>
+        <div class="overdue-task-meta">
+          <span class="urgency-dot urgency-{{ task.urgency }}"></span>
+          {{ task.urgency | titlecase }}
+          <span class="overdue-sep">·</span>
+          {{ task.assigneeName ?? 'Unassigned' }}
+        </div>
+        <div class="overdue-task-due">Due: {{ task.dueDate }}</div>
+        <div class="overdue-task-status">Status: {{ task.status | titlecase }}</div>
+        <div class="overdue-task-actions">
+          <button class="overdue-btn reassign" (click)="reassignTask(task)">Reassign</button>
+          <button
+            class="overdue-btn approve"
+            *ngIf="task.status === 'submitted'"
+            (click)="approveTask(task)"
+          >Approve</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

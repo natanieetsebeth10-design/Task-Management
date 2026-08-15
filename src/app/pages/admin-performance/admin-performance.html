@@ -1,0 +1,93 @@
+<div class="performance-page">
+
+  <div class="page-header">
+    <button class="back-btn" (click)="goBack()">← Back</button>
+    <div>
+      <h2>My Admin Performance</h2>
+      <div class="week-label">
+        Week of {{ weekStart | date:'MMM d' }} — {{ weekEnd | date:'MMM d, y' }}
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-text" *ngIf="loading">Loading performance data...</div>
+
+  <ng-container *ngIf="!loading">
+
+    <div class="stat-cards">
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ totalAssigned }}</div>
+        <div class="stat-label">Assigned</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ totalApproved }}</div>
+        <div class="stat-label">Approved</div>
+      </div>
+      <div class="stat-card" [class.stat-warn]="totalRejected > 0">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ totalRejected }}</div>
+        <div class="stat-label">Rejections Issued</div>
+      </div>
+      <div class="stat-card" [class.stat-warn]="autoApprovedCount > 0">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ autoApprovedCount }}</div>
+        <div class="stat-label">Auto-Approved</div>
+      </div>
+      <div class="stat-card" [class.stat-warn]="overdueCount > 0">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ overdueCount }}</div>
+        <div class="stat-label">Overdue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ avgQualityGiven }}/5</div>
+        <div class="stat-label">Avg Quality Given</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ avgSpeedGiven }}/5</div>
+        <div class="stat-label">Avg Speed Given</div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+
+      <div class="chart-card chart-wide">
+        <div class="chart-title">Task Overview This Week</div>
+        <canvas baseChart
+          [data]="statsChartData"
+          [options]="statsChartOptions"
+          type="bar">
+        </canvas>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Approval Breakdown</div>
+        <div class="doughnut-wrapper">
+          <canvas baseChart
+            [data]="doughnutChartData"
+            [options]="doughnutChartOptions"
+            type="doughnut">
+          </canvas>
+          <div class="doughnut-center">{{ manualApprovalRate }}%</div>
+        </div>
+        <div style="text-align:center; font-size:0.78rem; color:#8fa3e6; margin-top:8px;">
+          Manual approval rate
+        </div>
+      </div>
+
+    </div>
+
+    <div class="chart-card" style="margin-bottom:24px;" *ngIf="ratingsChartData.datasets[0]?.data?.length">
+      <div class="chart-title">Ratings Given Per Task</div>
+      <canvas baseChart
+        [data]="ratingsChartData"
+        [options]="ratingsChartOptions"
+        type="bar">
+      </canvas>
+    </div>
+
+  </ng-container>
+</div>

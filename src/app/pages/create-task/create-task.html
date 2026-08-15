@@ -1,0 +1,75 @@
+<div class="create-task-container">
+  <div class="page-header">
+    <button class="back-btn" (click)="goBack()">← Back</button>
+    <h2>Create Task</h2>
+  </div>
+
+  <form *ngIf="taskForm" [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+
+    <div class="form-group">
+      <label for="assigner">Assigner</label>
+      <input type="text" id="assigner" formControlName="assigner" readonly>
+    </div>
+
+    <div class="form-group">
+      <label for="assignee">Assignee</label>
+      <select id="assignee" formControlName="assigneeId">
+        <option value="" disabled>Select assignee</option>
+        <option *ngIf="loading" disabled>Loading employees...</option>
+        <option *ngFor="let user of assignees" [value]="user.id">
+          {{ user.name }}
+        </option>
+      </select>
+      <div class="field-hint" *ngIf="!loading && assignees.length === 0">
+        No other users found in your company.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="urgency">Urgency</label>
+      <select id="urgency" formControlName="urgency">
+        <option value="low"> Low</option>
+        <option value="medium"> Medium</option>
+        <option value="high"> High</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="details">Task Details</label>
+      <textarea
+        id="details"
+        formControlName="details"
+        placeholder="Describe the task..."
+        rows="4"
+      ></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="startDate">Start Date</label>
+        <input type="date" id="startDate" formControlName="startDate">
+      </div>
+
+      <div class="form-group">
+        <label for="dueDate">Due Date</label>
+        <input type="date" id="dueDate" formControlName="dueDate">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="duration">Estimated Duration (hours)</label>
+      <input type="number" id="duration" formControlName="duration" min="1">
+    </div>
+
+    <div *ngIf="success" class="success-message">{{ success }}</div>
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="goBack()">Cancel</button>
+      <button type="submit" class="btn-primary" [disabled]="taskForm.invalid || loading">
+        Create Task
+      </button>
+    </div>
+
+  </form>
+</div>

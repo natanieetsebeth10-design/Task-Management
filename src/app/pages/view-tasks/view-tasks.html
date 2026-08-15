@@ -1,0 +1,131 @@
+<div class="tasks-calendar">
+
+  <div class="page-header">
+    <button class="back-btn" (click)="goBack()">← Back</button>
+    <h3>My Task Calendar</h3>
+  </div>
+
+  <div class="calendar-layout">
+
+    <!-- LEFT: calendar -->
+    <div class="calendar-main">
+
+      <div class="week-controls">
+        <button (click)="prevWeek()">Prev Week</button>
+        <button (click)="currentWeek()">Current Week</button>
+        <button (click)="nextWeek()">Next Week</button>
+      </div>
+
+      <table class="calendar-table">
+        <thead>
+          <tr>
+            <th>Status \ Day</th>
+            <th *ngFor="let day of weekDays">{{ day | date:'EEE d/M' }}</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Received -->
+          <tr>
+            <td class="status-label">Received</td>
+            <td *ngFor="let day of weekDays">
+              <ng-container *ngFor="let task of receivedTasksByDay[datePipe.transform(day,'yyyy-MM-dd')!] || []">
+                <div class="task-card" [ngClass]="getTaskClass(task)" [class.due-today]="task.dueDate === today">
+                  <div class="task-title">{{ task.details }}</div>
+                  <div class="task-urgency">Urgency: {{ task.urgency | titlecase }}</div>
+                  <div *ngIf="task.rejectCount && task.rejectCount > 0" class="stage-tag tag-red">
+                     Rejected — needs revision
+                  </div>
+                  <div *ngIf="task.reassigned" class="stage-tag tag-orange">
+                     Reassigned to you
+                  </div>
+                  <div *ngIf="getDaysUntilDue(task) <= 2 && getDaysUntilDue(task) >= 0 && !(task.rejectCount && task.rejectCount > 0) && !task.reassigned" class="stage-tag tag-yellow">
+                     Due in {{ getDaysUntilDue(task) === 0 ? 'today' : getDaysUntilDue(task) + ' day(s)' }}
+                  </div>
+                  <div *ngIf="task.dueDate === today" class="due-today-tag"> Due Today</div>
+                  <div class="task-actions">
+                    <button (click)="acceptTask(task)">Accept</button>
+                    <button class="btn-reject" (click)="rejectTask(task)">Reject</button>
+                  </div>
+                </div>
+              </ng-container>
+            </td>
+          </tr>
+
+          <!-- To Do -->
+          <tr>
+            <td class="status-label">To Do</td>
+            <td *ngFor="let day of weekDays">
+              <ng-container *ngFor="let task of todoTasksByDay[datePipe.transform(day,'yyyy-MM-dd')!] || []">
+                <div class="task-card" [ngClass]="getTaskClass(task)" [class.due-today]="task.dueDate === today">
+                  <div class="task-title">{{ task.details }}</div>
+                  <div class="task-urgency">Urgency: {{ task.urgency | titlecase }}</div>
+                  <div *ngIf="task.reassigned" class="stage-tag tag-orange">
+                     Reassigned to you
+                  </div>
+                  <div *ngIf="getDaysUntilDue(task) <= 2 && getDaysUntilDue(task) >= 0 && !task.reassigned" class="stage-tag tag-yellow">
+                     Due in {{ getDaysUntilDue(task) === 0 ? 'today' : getDaysUntilDue(task) + ' day(s)' }}
+                  </div>
+                  <div *ngIf="task.dueDate === today" class="due-today-tag"> Due Today</div>
+                  <div *ngIf="task.autoAccepted" class="auto-tag"> Auto-accepted</div>
+                  <div class="task-actions">
+                    <button (click)="submitForApproval(task)">Submit for Approval</button>
+                  </div>
+                </div>
+              </ng-container>
+            </td>
+          </tr>
+
+          <!-- Completed -->
+          <tr>
+            <td class="status-label">Completed</td>
+            <td *ngFor="let day of weekDays">
+              <ng-container *ngFor="let task of completedTasksByDay[datePipe.transform(day,'yyyy-MM-dd')!] || []">
+                <div class="task-card" [ngClass]="getTaskClass(task)">
+                  <div class="task-title">{{ task.details }}</div>
+                  <div class="task-urgency">Urgency: {{ task.urgency | titlecase }}</div>
+                  <div *ngIf="task.autoApproved" class="auto-tag"> Auto-approved</div>
+                </div>
+              </ng-container>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- RIGHT: today panel -->
+    <div class="today-panel">
+      <div class="today-panel-header">
+        <span class="today-panel-icon"></span>
+        <div>
+          <div class="today-panel-title">Due Today</div>
+          <div class="today-panel-date">{{ today | date:'MMM d, y' }}</div>
+        </div>
+        <span class="today-panel-count" *ngIf="todayTasks.length > 0">
+          {{ todayTasks.length }}
+        </span>
+      </div>
+
+      <div class="today-empty" *ngIf="todayTasks.length === 0">
+         Nothing due today!
+      </div>
+
+      <div class="today-task-card" *ngFor="let task of todayTasks">
+        <div class="today-task-title">{{ task.details }}</div>
+        <div class="today-task-meta">
+          <span class="urgency-dot urgency-{{ task.urgency }}"></span>
+          {{ task.urgency | titlecase }}
+          <span class="today-task-status">· {{ task.status | titlecase }}</span>
+        </div>
+        <div class="today-task-actions">
+          <button class="today-btn accept" *ngIf="task.status === 'received'" (click)="acceptTask(task)">Accept</button>
+          <button class="today-btn submit" *ngIf="task.status === 'approved'" (click)="submitForApproval(task)">Submit</button>
+          <button class="today-btn reject" *ngIf="task.status === 'received'" (click)="rejectTask(task)">Reject</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

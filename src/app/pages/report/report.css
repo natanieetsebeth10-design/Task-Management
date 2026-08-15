@@ -1,0 +1,419 @@
+/* ── Page wrapper ── */
+.admin-calendar {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1400px;
+  margin: 40px auto;
+  background-color: #e6ebfa;
+  border-radius: 16px;
+  padding: 36px 40px;
+  box-shadow: 0 6px 24px rgba(143,163,230,0.15);
+}
+
+h3 {
+  color: #8fa3e6;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+/* ── Benchmark control ── */
+.week-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  background-color: #f0f4ff;
+  border-left: 4px solid #8fa3e6;
+  border-radius: 10px;
+  padding: 14px 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  font-size: 1rem;
+}
+
+.week-controls input {
+  width: 80px;
+  margin-left: 10px;
+  border: 1px solid #c8d0f8;
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: #4b5bbf;
+  font-size: 1rem;
+  background-color: #e6ebfa;
+}
+
+/* ── Leaderboard table ── */
+.calendar-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  font-size: 1rem;
+}
+
+.calendar-table th {
+  background-color: #c8d0f8;
+  color: #4b5bbf;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.calendar-table th:first-child { border-radius: 10px 0 0 10px; }
+.calendar-table th:last-child  { border-radius: 0 10px 10px 0; }
+
+.leaderboard-row td {
+  background-color: #f0f4ff;
+  padding: 14px 16px;
+  transition: background-color 0.15s ease;
+  vertical-align: middle;
+  font-size: 0.95rem;
+  color: #3c4ba8;
+}
+
+.leaderboard-row td:first-child { border-radius: 10px 0 0 10px; }
+.leaderboard-row td:last-child  { border-radius: 0 10px 10px 0; }
+
+.leaderboard-row:hover td {
+  background-color: #e3e8fa;
+}
+
+.selected-row td {
+  background-color: #d8e0f8 !important;
+}
+
+/* ── Task title inside table ── */
+.task-title {
+  font-weight: 700;
+  color: #4b5bbf;
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+
+/* ── Utilization bar ── */
+.utilization-bar-bg {
+  background-color: #c8d0f8;
+  border-radius: 8px;
+  height: 12px;
+  margin-bottom: 6px;
+  overflow: hidden;
+  min-width: 100px;
+}
+
+.utilization-bar-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.5s ease;
+}
+
+.util-high { background-color: #8fa3e6; }
+.util-mid  { background-color: #a5b5f0; }
+.util-low  { background-color: #c8d0f8; }
+
+/* ── Stars ── */
+.star        { color: #c8d0f8; font-size: 1.1rem; }
+.star.filled { color: #a5b5f0; }
+
+/* ── Benchmark input inside table ── */
+.calendar-table input[type="number"] {
+  width: 70px;
+  border: 1px solid #c8d0f8;
+  border-radius: 8px;
+  padding: 6px 8px;
+  color: #4b5bbf;
+  font-size: 0.95rem;
+  background-color: #e6ebfa;
+  text-align: center;
+}
+
+/* ── View/Close button ── */
+.calendar-table button {
+  background: linear-gradient(90deg, #8fa3e6, #a5b5f0);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.calendar-table button:hover {
+  background: linear-gradient(90deg, #7b91d4, #8fa3e6);
+  box-shadow: 0 4px 12px rgba(143,163,230,0.3);
+  transform: translateY(-1px);
+}
+
+/* ── Drilldown row ── */
+.drilldown-cell {
+  background-color: #eef1fc !important;
+  padding: 28px 24px !important;
+  border-radius: 0 0 12px 12px;
+}
+
+.drilldown-container {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.drilldown-left {
+  flex: 2;
+  min-width: 380px;
+  background-color: #f0f4ff;
+  border-left: 4px solid #8fa3e6;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.drilldown-right {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Gauge ── */
+.gauge-container {
+  background-color: #f0f4ff;
+  border-left: 4px solid #8fa3e6;
+  border-radius: 10px;
+  padding: 24px 16px;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* ── Feedback comment cards ── */
+.task-card {
+  background-color: #f0f4ff;
+  border-left: 4px solid #8fa3e6;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  font-size: 0.95rem;
+  color: #3c4ba8;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(143,163,230,0.2);
+}
+
+/* ── Responsive ── */
+@media screen and (max-width: 1024px) {
+  .admin-calendar {
+    margin: 20px;
+    padding: 24px 20px;
+  }
+
+  .drilldown-left  { min-width: 100%; }
+  .drilldown-right { min-width: 100%; }
+}
+
+@media screen and (max-width: 600px) {
+  .calendar-table th,
+  .calendar-table td {
+    font-size: 0.8rem;
+    padding: 10px 8px;
+  }
+
+  h3 { font-size: 1.2rem; }
+}
+/* ── Controls bar ── */
+.controls-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  background-color: #f0f4ff;
+  border-left: 4px solid #8fa3e6;
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #8fa3e6;
+}
+
+.control-input,
+.control-select {
+  border: 1px solid #c8d0f8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #4b5bbf;
+  font-size: 0.95rem;
+  background-color: #e6ebfa;
+  min-width: 140px;
+}
+
+.control-select.small {
+  min-width: 80px;
+}
+
+.control-actions {
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.btn-apply {
+  background: linear-gradient(90deg, #8fa3e6, #a5b5f0);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.btn-apply:hover {
+  background: linear-gradient(90deg, #7b91d4, #8fa3e6);
+  transform: translateY(-1px);
+}
+
+.btn-clear {
+  background-color: #c8d0f8;
+  color: #4b5bbf;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-clear:hover {
+  background-color: #b0bcf4;
+}
+
+/* ── Pagination ── */
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 14px 20px;
+  background-color: #f0f4ff;
+  border-radius: 10px;
+  border-left: 4px solid #8fa3e6;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.page-size-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-info {
+  font-size: 0.9rem;
+  color: #4b5bbf;
+  font-weight: 500;
+}
+
+.page-controls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.page-btn {
+  background-color: #e6ebfa;
+  color: #4b5bbf;
+  border: 1px solid #c8d0f8;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  min-width: 36px;
+}
+
+.page-btn:hover:not(:disabled) {
+  background-color: #c8d0f8;
+  transform: translateY(-1px);
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.active-page {
+  background: linear-gradient(90deg, #8fa3e6, #a5b5f0);
+  color: #fff;
+  border-color: transparent;
+}
+/* Global back button + page header */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.page-header h2,
+.page-header h3 {
+  margin: 0;
+}
+
+.back-btn {
+  background: #f0f4ff;
+  color: #4b5bbf;
+  border: 1px solid #c8d0f8;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.back-btn:hover {
+  background: #c8d0f8;
+  transform: translateX(-2px);
+}
+.warn-count {
+  background: #fdecea;
+  color: #c62828;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.ok-count {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}

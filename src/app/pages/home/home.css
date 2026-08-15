@@ -1,0 +1,67 @@
+.home-page {
+  font-family: 'Inter', sans-serif;
+  background: #e6ebfa; /* soft pastel blue-purple background */
+  color: #333;
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HERO IMAGE */
+.hero-image {
+  width: 80%;
+  max-width: 600px;
+  height: 250px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 30px auto;
+  border-radius: 12px;
+}
+
+/* HEADER NAV */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  background: linear-gradient(90deg, #8fa3e6, #a5b5f0); /* pastel blue-purple gradient */
+  border-bottom: 1px solid #d0d4f0; /* subtle pastel border */
+  color: #ffffff;
+}
+
+/* NAV LINKS */
+.nav-left a,
+.nav-right a {
+  text-decoration: none;
+  color: #ffffff; /* white text to pop on gradient header */
+  font-weight: 500;
+  margin: 0 15px;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+.nav-left a:hover,
+.nav-right a:hover {
+  color: #c8d0f8; /* lighter pastel accent on hover */
+}
+
+/* HERO SECTION */
+.home-container {
+  max-width: 900px;
+  margin: 70px auto;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.home-container h1 {
+  font-size: 50px;
+  font-weight: 800;
+  margin-bottom: 25px;
+  color: #8fa3e6; /* soft pastel blue-purple */
+}
+
+.home-container p {
+  font-size: 18px;
+  line-height: 1.7;
+  color: #6b7280; /* soft grey for readability */
+}

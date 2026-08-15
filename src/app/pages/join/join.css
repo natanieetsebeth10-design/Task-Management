@@ -1,0 +1,72 @@
+.join-page {
+  font-family: "Poppins", sans-serif;
+  min-height: 100vh;
+  background: #e6ebfa; /* soft pastel blue-purple background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.join-container {
+  max-width: 450px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.95); /* keeps container slightly transparent */
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+  text-align: center;
+}
+
+.join-container h2 {
+  font-size: 32px;
+  color: #8fa3e6; /* soft pastel blue-purple for heading */
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: #f3f3f3;
+  margin-top: 5px;
+  transition: all 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  background: #ece8ff;
+  box-shadow: 0 0 0 2px #a5b5f0; /* pastel blue-purple focus */
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #8fa3e6, #a5b5f0); /* pastel blue-purple gradient */
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.error-message {
+  color: #ff4d88;
+  margin-bottom: 12px;
+}
+
+.success-message {
+  color: #7cff9c;
+  margin-bottom: 12px;
+}

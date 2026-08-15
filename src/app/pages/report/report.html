@@ -1,0 +1,200 @@
+<div class="admin-calendar">
+  <!-- CONTROLS BAR -->
+  <div class="controls-bar">
+ <div class="page-header">
+    <button class="back-btn" (click)="goBack()">← Back</button>
+    <h3>Performance Reports</h3>
+  </div>
+    <div class="control-group">
+      <label class="control-label">Global Benchmark (hrs/wk)</label>
+      <input
+        type="number"
+        class="control-input"
+        [(ngModel)]="weeklyBenchmark"
+        (change)="onGlobalBenchmarkChange()"
+        min="1"
+      />
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">Employee</label>
+      <select class="control-select" [(ngModel)]="filterUserId">
+        <option value="all">All Employees</option>
+        <option *ngFor="let u of nonAdminUsers" [value]="u.id">{{ u.name }}</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">From</label>
+      <input type="date" class="control-input" [(ngModel)]="filterDateFrom" />
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">To</label>
+      <input type="date" class="control-input" [(ngModel)]="filterDateTo" />
+    </div>
+
+    <div class="control-group control-actions">
+      <button class="btn-apply" (click)="applyFilters()">Apply</button>
+      <button class="btn-clear" (click)="clearFilters()">Clear</button>
+    </div>
+
+  </div>
+
+  <!-- LEADERBOARD -->
+  <table class="calendar-table">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Employee</th>
+        <th>Completed Tasks</th>
+        <th>Total Hours</th>
+        <th>Utilization</th>
+        <th>Avg Quality</th>
+        <th>Avg Speed</th>
+        <th>Benchmark (hrs/wk)</th>
+        <th>Detail</th>
+        <th>Auto-Accepts</th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let report of pagedReports; let i = index">
+        <tr class="leaderboard-row" [class.selected-row]="selectedUserId === report.user.id">
+          <td style="text-align:center; font-weight:700; color:#4b5bbf;">
+            {{ (currentPage - 1) * pageSize + i === 0 ? '1' :
+               (currentPage - 1) * pageSize + i === 1 ? '2' :
+               (currentPage - 1) * pageSize + i === 2 ? '3' :
+               (currentPage - 1) * pageSize + i + 1 }}
+          </td>
+          <td>
+            <div class="task-title">{{ report.user.name }}</div>
+            <div style="font-size:0.85rem; color:#8fa3e6;">{{ report.user.email }}</div>
+          </td>
+          <td style="text-align:center;">{{ report.tasks.length }}</td>
+          <td style="text-align:center;">{{ report.totalHours }}h</td>
+          <td>
+            <div class="utilization-bar-bg">
+              <div
+                class="utilization-bar-fill"
+                [style.width.%]="report.utilization"
+                [class.util-high]="report.utilization >= 80"
+                [class.util-mid]="report.utilization >= 50 && report.utilization < 80"
+                [class.util-low]="report.utilization < 50"
+              ></div>
+            </div>
+            <div style="font-size:0.85rem; color:#4b5bbf; text-align:center;">{{ report.utilization }}%</div>
+          </td>
+          <td style="text-align:center;"><span class="star filled">★</span> {{ report.avgQuality }}/5</td>
+          <td style="text-align:center;"><span class="star filled">★</span> {{ report.avgSpeed }}/5</td>
+          <td style="text-align:center;">
+            <input
+              type="number"
+              [value]="report.user.benchmark ?? weeklyBenchmark"
+              (change)="updateBenchmark(report.user, +$any($event.target).value)"
+              min="1"
+              style="width:64px; border:1px solid #c8d0f8; border-radius:8px; padding:6px; color:#4b5bbf; text-align:center; background:#e6ebfa;"
+            />
+          </td>
+          <td style="text-align:center;">
+  <span [class]="(report.user.autoAcceptCount ?? 0) > 0 ? 'warn-count' : 'ok-count'">
+    {{ report.user.autoAcceptCount ?? 0 }}
+  </span>
+</td>
+          <td style="text-align:center;">
+            <button (click)="selectUser(report.user.id!)">
+              {{ selectedUserId === report.user.id ? 'Close' : 'View' }}
+            </button>
+          </td>
+        </tr>
+
+        <!-- DRILLDOWN ROW -->
+        <tr *ngIf="selectedUserId === report.user.id">
+          <td colspan="9" class="drilldown-cell">
+            <div class="drilldown-container">
+
+              <div class="drilldown-left">
+                <h3 style="margin-bottom:12px;">{{ report.user.name }} — Ratings per Task</h3>
+                <canvas baseChart
+                  [data]="ratingChartData"
+                  [options]="ratingChartOptions"
+                  type="bar">
+                </canvas>
+              </div>
+
+              <div class="drilldown-right">
+
+                <h3 style="margin-bottom:12px;">Utilization</h3>
+                <div class="gauge-container">
+                  <svg viewBox="0 0 200 120" width="200">
+                    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#c8d0f8" stroke-width="16" stroke-linecap="round"/>
+                    <path
+                      d="M 20 100 A 80 80 0 0 1 180 100"
+                      fill="none"
+                      [attr.stroke]="gaugeValue >= 80 ? '#8fa3e6' : gaugeValue >= 50 ? '#a5b5f0' : '#c8d0f8'"
+                      stroke-width="16"
+                      stroke-linecap="round"
+                      [attr.stroke-dasharray]="(gaugeValue / 100) * 251 + ' 251'"
+                    />
+                    <text x="100" y="95" text-anchor="middle" font-size="28" font-weight="700" fill="#4b5bbf">{{ gaugeValue }}%</text>
+                    <text x="100" y="114" text-anchor="middle" font-size="11" fill="#8fa3e6">utilization</text>
+                  </svg>
+                </div>
+
+                <h3 style="margin:16px 0 10px;">Feedback Comments</h3>
+                <div *ngIf="report.comments.length === 0" style="color:#8fa3e6; font-size:0.9rem;">
+                  No comments yet.
+                </div>
+                <div class="task-card" *ngFor="let c of report.comments">
+                  <div class="task-title">{{ c.taskDetails }}</div>
+                  <div style="font-size:0.8rem; color:#8fa3e6; margin-bottom:4px;">{{ c.date | date:'mediumDate' }}</div>
+                  <div>{{ c.comment }}</div>
+                </div>
+
+              </div>
+            </div>
+          </td>
+        </tr>
+
+      </ng-container>
+
+      <tr *ngIf="filteredReports.length === 0">
+        <td colspan="9" style="text-align:center; padding:32px; color:#8fa3e6; font-size:1rem;">
+          No results found for the selected filters.
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- PAGINATION -->
+  <div class="pagination-bar">
+
+    <div class="page-size-control">
+      <label class="control-label">Rows per page</label>
+      <select class="control-select small" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+        <option *ngFor="let s of pageSizeOptions" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+
+    <div class="page-info">
+      {{ (currentPage - 1) * pageSize + 1 }}–{{ Math.min(currentPage * pageSize, filteredReports.length) }}
+      of {{ filteredReports.length }}
+    </div>
+
+    <div class="page-controls">
+      <button class="page-btn" (click)="goToPage(1)" [disabled]="currentPage === 1">«</button>
+      <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">‹</button>
+      <button
+        class="page-btn"
+        *ngFor="let p of pageNumbers"
+        [class.active-page]="p === currentPage"
+        (click)="goToPage(p)"
+      >{{ p }}</button>
+      <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">›</button>
+      <button class="page-btn" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages">»</button>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,124 @@
+<div class="performance-page">
+
+  <div class="page-header">
+    <button class="back-btn" (click)="goBack()">← Back</button>
+    <div>
+      <h2>My Performance</h2>
+      <div class="week-label">
+        Week of {{ weekStart | date:'MMM d' }} — {{ weekEnd | date:'MMM d, y' }}
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-text" *ngIf="loading">Loading your performance data...</div>
+
+  <ng-container *ngIf="!loading">
+
+    <div class="stat-cards">
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ totalCompleted }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ avgQuality }}/5</div>
+        <div class="stat-label">Avg Quality</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ avgSpeed }}/5</div>
+        <div class="stat-label">Avg Speed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ utilization }}%</div>
+        <div class="stat-label">Utilization</div>
+      </div>
+      <div class="stat-card" [class.stat-warn]="overdueCount > 0">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ overdueCount }}</div>
+        <div class="stat-label">Overdue</div>
+      </div>
+      <div class="stat-card" [class.stat-warn]="rejectionCount > 0">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ rejectionCount }}</div>
+        <div class="stat-label">Rejections</div>
+      </div>
+      <div class="stat-card" [class.stat-warn]="autoAcceptCount > 0">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ autoAcceptCount }}</div>
+        <div class="stat-label">Auto-Accepted</div>
+      </div>
+      <div class="stat-card" [class.stat-warn]="autoApproveCount > 0">
+        <div class="stat-icon"></div>
+        <div class="stat-value">{{ autoApproveCount }}</div>
+        <div class="stat-label">Auto-Approved</div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+
+      <div class="chart-card">
+        <div class="chart-title">Utilization</div>
+        <div class="doughnut-wrapper">
+          <canvas baseChart
+            [data]="doughnutChartData"
+            [options]="doughnutChartOptions"
+            type="doughnut">
+          </canvas>
+          <div class="doughnut-center">{{ utilization }}%</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Quality vs Speed</div>
+        <canvas baseChart
+          [data]="radarChartData"
+          [options]="radarChartOptions"
+          type="radar">
+        </canvas>
+      </div>
+
+      <div class="chart-card chart-wide">
+        <div class="chart-title">Weekly Overview</div>
+        <canvas baseChart
+          [data]="statsChartData"
+          [options]="statsChartOptions"
+          type="bar">
+        </canvas>
+      </div>
+
+    </div>
+
+    <div class="comments-section">
+      <div class="comments-title"> Feedback This Week</div>
+
+      <div class="comments-empty" *ngIf="weeklyComments.length === 0">
+        No feedback comments this week.
+      </div>
+
+      <table class="comments-table" *ngIf="weeklyComments.length > 0">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Task</th>
+            <th>Comment</th>
+            <th>Quality</th>
+            <th>Speed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of weeklyComments">
+            <td>{{ c.date | date:'MMM d' }}</td>
+            <td>{{ c.task }}</td>
+            <td>{{ c.comment }}</td>
+            <td><span class="rating-pill">{{ c.quality }}/5</span></td>
+            <td><span class="rating-pill">{{ c.speed }}/5</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </ng-container>
+</div>

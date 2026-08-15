@@ -1,0 +1,71 @@
+<div class="dashboard">
+
+  <header class="dashboard-header">
+    <div class="header-left">
+      <button class="menu-btn" (click)="sidebar.toggle()">
+        <img src="assets/logo1.png" alt="Menu" class="hero-images">
+      </button>
+    </div>
+    <div class="header-right">
+      <button class="notif-btn" (click)="goToNotifications()">
+        <div class="notif-wrapper">
+          <img src="assets/icons/bell.svg" alt="Notifications">
+          <span class="notif-badge" *ngIf="unreadCount > 0">
+            {{ unreadCount > 99 ? '99+' : unreadCount }}
+          </span>
+        </div>
+      </button>
+      <button class="settings-btn" (click)="goToSettings()">
+        <img src="assets/icons/settings.svg" alt="Settings">
+      </button>
+    </div>
+  </header>
+
+  <img src="assets/banner.png" alt="Dashboard banner" class="hero-image">
+
+  <app-sidebar #sidebar="sidebarComp" [isAdmin]="isAdmin"></app-sidebar>
+
+  <div class="dashboard-container">
+
+    <div class="loading-text" *ngIf="loadingRole">Loading permissions...</div>
+
+    <div class="action-buttons" *ngIf="!loadingRole">
+
+      <div class="action-group">
+        <div class="group-label">General</div>
+        <button class="action-btn" (click)="navigate('/create-task')">
+          <span class="btn-icon"></span> Create Task
+        </button>
+        <button class="action-btn" (click)="navigate('/view-tasks')">
+          <span class="btn-icon"></span> View Tasks
+        </button>
+        <button class="action-btn" (click)="navigate('/my-performance')">
+          <span class="btn-icon"></span> My Performance
+        </button>
+      </div>
+
+      <ng-container *ngIf="isAdmin">
+        <div class="action-group">
+          <div class="group-label">Admin</div>
+          <button class="action-btn" (click)="navigate('/add-user')">
+            <span class="btn-icon"></span> Create User
+          </button>
+          <button class="action-btn" (click)="navigate('/admin-board')">
+            <span class="btn-icon"></span> Admin Board
+          </button>
+          <button class="action-btn" (click)="navigate('/reports')">
+            <span class="btn-icon"></span> Reports
+          </button>
+          <button class="action-btn" (click)="navigate('/task-search')">
+            <span class="btn-icon"></span> Task Search
+          </button>
+          <button class="action-btn" (click)="navigate('/admin-performance')">
+            <span class="btn-icon"></span> My Admin Stats
+          </button>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,100 @@
+<div class="dialog-container">
+
+  <h2 class="dialog-title">
+    {{ data.action === 'approve' ? 'Approve Task' : data.action === 'reject' ? 'Reject Task' : 'Reassign Task' }}
+  </h2>
+
+  <form [formGroup]="form">
+
+    <!-- APPROVE -->
+    <div *ngIf="data.action === 'approve'">
+
+      <div class="rating-group">
+        <label class="rating-label">Quality</label>
+        <div class="stars">
+          <span
+            *ngFor="let star of [1,2,3,4,5]"
+            class="star"
+            [class.filled]="star <= form.get('quality')!.value"
+            (click)="form.get('quality')!.setValue(star)"
+          >★</span>
+        </div>
+      </div>
+
+      <div class="rating-group">
+        <label class="rating-label">Speed</label>
+        <div class="stars">
+          <span
+            *ngFor="let star of [1,2,3,4,5]"
+            class="star"
+            [class.filled]="star <= form.get('speed')!.value"
+            (click)="form.get('speed')!.setValue(star)"
+          >★</span>
+        </div>
+      </div>
+
+      <div class="field-group" *ngIf="form.get('comment')?.hasValidator(requiredValidator)">
+        <label class="field-label">
+          Comment <span class="required-note">(required — rating below 3)</span>
+        </label>
+        <textarea
+          class="field-textarea"
+          formControlName="comment"
+          rows="3"
+          placeholder="Please explain the low rating..."
+        ></textarea>
+      </div>
+
+    </div>
+
+    <!-- REJECT -->
+    <div *ngIf="data.action === 'reject'">
+      <div class="field-group">
+        <label class="field-label">Feedback</label>
+        <textarea
+          class="field-textarea"
+          formControlName="feedback"
+          rows="4"
+          placeholder="Explain why this task was rejected..."
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- REASSIGN -->
+    <div *ngIf="data.action === 'reassign'">
+      <div class="field-group">
+        <label class="field-label">Reassign To</label>
+
+        <div *ngIf="loadingUsers" class="loading-users">
+          <div class="loading-spinner"></div>
+          <span>Loading employees...</span>
+        </div>
+
+        <select
+          *ngIf="!loadingUsers"
+          class="field-input"
+          formControlName="newUserId"
+        >
+          <option value="" disabled>Select employee...</option>
+          <option *ngFor="let user of users" [value]="user.id">
+            {{ user.name }}
+          </option>
+        </select>
+
+        <div
+          *ngIf="!loadingUsers && users.length === 0"
+          style="color:#8fa3e6; font-size:0.85rem; margin-top:6px;"
+        >
+          No other employees available.
+        </div>
+
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button class="btn-cancel" type="button" (click)="cancel()">Cancel</button>
+      <button class="btn-submit" type="button" [disabled]="form.invalid" (click)="submit()">Submit</button>
+    </div>
+
+  </form>
+</div>

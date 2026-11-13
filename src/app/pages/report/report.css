@@ -1,37 +1,87 @@
-/* ── Page wrapper ── */
+
+* {
+  box-sizing: border-box;
+}
+
 .admin-calendar {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: calc(100% - 40px);
   max-width: 1400px;
-  margin: 40px auto;
+  min-width: 0;
+  margin: 24px auto;
   background-color: #e6ebfa;
   border-radius: 16px;
-  padding: 36px 40px;
+  padding: clamp(14px, 2.5vw, 36px) clamp(12px, 3vw, 40px);
   box-shadow: 0 6px 24px rgba(143,163,230,0.15);
+  overflow: hidden;
 }
 
 h3 {
   color: #8fa3e6;
-  font-size: 1.5rem;
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
   font-weight: 700;
   margin-bottom: 24px;
 }
 
-/* ── Benchmark control ── */
+/* ============================================
+   PAGE HEADER
+============================================ */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.page-header h2,
+.page-header h3 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.back-btn {
+  background: #f0f4ff;
+  color: #4b5bbf;
+  border: 1px solid #c8d0f8;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.back-btn:hover {
+  background: #c8d0f8;
+  transform: translateX(-2px);
+}
+
+/* ============================================
+   BENCHMARK CONTROL
+============================================ */
+
 .week-controls {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   background-color: #f0f4ff;
   border-left: 4px solid #8fa3e6;
   border-radius: 10px;
   padding: 14px 20px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   font-size: 1rem;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .week-controls input {
   width: 80px;
+  max-width: 100%;
   margin-left: 10px;
   border: 1px solid #c8d0f8;
   border-radius: 8px;
@@ -41,193 +91,10 @@ h3 {
   background-color: #e6ebfa;
 }
 
-/* ── Leaderboard table ── */
-.calendar-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 6px;
-  font-size: 1rem;
-}
+/* ============================================
+   CONTROLS BAR / FILTERS
+============================================ */
 
-.calendar-table th {
-  background-color: #c8d0f8;
-  color: #4b5bbf;
-  font-weight: 700;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 14px 16px;
-  text-align: center;
-}
-
-.calendar-table th:first-child { border-radius: 10px 0 0 10px; }
-.calendar-table th:last-child  { border-radius: 0 10px 10px 0; }
-
-.leaderboard-row td {
-  background-color: #f0f4ff;
-  padding: 14px 16px;
-  transition: background-color 0.15s ease;
-  vertical-align: middle;
-  font-size: 0.95rem;
-  color: #3c4ba8;
-}
-
-.leaderboard-row td:first-child { border-radius: 10px 0 0 10px; }
-.leaderboard-row td:last-child  { border-radius: 0 10px 10px 0; }
-
-.leaderboard-row:hover td {
-  background-color: #e3e8fa;
-}
-
-.selected-row td {
-  background-color: #d8e0f8 !important;
-}
-
-/* ── Task title inside table ── */
-.task-title {
-  font-weight: 700;
-  color: #4b5bbf;
-  font-size: 1rem;
-  margin-bottom: 2px;
-}
-
-/* ── Utilization bar ── */
-.utilization-bar-bg {
-  background-color: #c8d0f8;
-  border-radius: 8px;
-  height: 12px;
-  margin-bottom: 6px;
-  overflow: hidden;
-  min-width: 100px;
-}
-
-.utilization-bar-fill {
-  height: 100%;
-  border-radius: 8px;
-  transition: width 0.5s ease;
-}
-
-.util-high { background-color: #8fa3e6; }
-.util-mid  { background-color: #a5b5f0; }
-.util-low  { background-color: #c8d0f8; }
-
-/* ── Stars ── */
-.star        { color: #c8d0f8; font-size: 1.1rem; }
-.star.filled { color: #a5b5f0; }
-
-/* ── Benchmark input inside table ── */
-.calendar-table input[type="number"] {
-  width: 70px;
-  border: 1px solid #c8d0f8;
-  border-radius: 8px;
-  padding: 6px 8px;
-  color: #4b5bbf;
-  font-size: 0.95rem;
-  background-color: #e6ebfa;
-  text-align: center;
-}
-
-/* ── View/Close button ── */
-.calendar-table button {
-  background: linear-gradient(90deg, #8fa3e6, #a5b5f0);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s ease, box-shadow 0.15s ease, transform 0.15s ease;
-}
-
-.calendar-table button:hover {
-  background: linear-gradient(90deg, #7b91d4, #8fa3e6);
-  box-shadow: 0 4px 12px rgba(143,163,230,0.3);
-  transform: translateY(-1px);
-}
-
-/* ── Drilldown row ── */
-.drilldown-cell {
-  background-color: #eef1fc !important;
-  padding: 28px 24px !important;
-  border-radius: 0 0 12px 12px;
-}
-
-.drilldown-container {
-  display: flex;
-  gap: 28px;
-  flex-wrap: wrap;
-  align-items: flex-start;
-}
-
-.drilldown-left {
-  flex: 2;
-  min-width: 380px;
-  background-color: #f0f4ff;
-  border-left: 4px solid #8fa3e6;
-  border-radius: 10px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-.drilldown-right {
-  flex: 1;
-  min-width: 260px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* ── Gauge ── */
-.gauge-container {
-  background-color: #f0f4ff;
-  border-left: 4px solid #8fa3e6;
-  border-radius: 10px;
-  padding: 24px 16px;
-  display: flex;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-/* ── Feedback comment cards ── */
-.task-card {
-  background-color: #f0f4ff;
-  border-left: 4px solid #8fa3e6;
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  font-size: 0.95rem;
-  color: #3c4ba8;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.task-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(143,163,230,0.2);
-}
-
-/* ── Responsive ── */
-@media screen and (max-width: 1024px) {
-  .admin-calendar {
-    margin: 20px;
-    padding: 24px 20px;
-  }
-
-  .drilldown-left  { min-width: 100%; }
-  .drilldown-right { min-width: 100%; }
-}
-
-@media screen and (max-width: 600px) {
-  .calendar-table th,
-  .calendar-table td {
-    font-size: 0.8rem;
-    padding: 10px 8px;
-  }
-
-  h3 { font-size: 1.2rem; }
-}
-/* ── Controls bar ── */
 .controls-bar {
   display: flex;
   flex-wrap: wrap;
@@ -236,15 +103,17 @@ h3 {
   background-color: #f0f4ff;
   border-left: 4px solid #8fa3e6;
   border-radius: 10px;
-  padding: 18px 20px;
+  padding: clamp(12px, 2vw, 18px) clamp(12px, 2vw, 20px);
   margin-bottom: 24px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  min-width: 0;
 }
 
 .control-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 
 .control-label {
@@ -257,13 +126,15 @@ h3 {
 
 .control-input,
 .control-select {
+  width: 100%;
+  min-width: 140px;
+  max-width: 100%;
   border: 1px solid #c8d0f8;
   border-radius: 8px;
   padding: 8px 12px;
   color: #4b5bbf;
   font-size: 0.95rem;
   background-color: #e6ebfa;
-  min-width: 140px;
 }
 
 .control-select.small {
@@ -274,6 +145,7 @@ h3 {
   flex-direction: row;
   align-items: flex-end;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .btn-apply {
@@ -309,7 +181,252 @@ h3 {
   background-color: #b0bcf4;
 }
 
-/* ── Pagination ── */
+/* ============================================
+   LEADERBOARD TABLE
+============================================ */
+
+.calendar-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 10px;
+}
+
+.calendar-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  font-size: 1rem;
+}
+
+.calendar-table th {
+  background-color: #c8d0f8;
+  color: #4b5bbf;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 14px 16px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.calendar-table th:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.calendar-table th:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+.leaderboard-row td {
+  background-color: #f0f4ff;
+  padding: 14px 16px;
+  transition: background-color 0.15s ease;
+  vertical-align: middle;
+  font-size: 0.95rem;
+  color: #3c4ba8;
+  overflow-wrap: anywhere;
+}
+
+.leaderboard-row td:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.leaderboard-row td:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+.leaderboard-row:hover td {
+  background-color: #e3e8fa;
+}
+
+.selected-row td {
+  background-color: #d8e0f8 !important;
+}
+
+/* ============================================
+   TASK TITLE
+============================================ */
+
+.task-title {
+  font-weight: 700;
+  color: #4b5bbf;
+  font-size: 1rem;
+  margin-bottom: 2px;
+  overflow-wrap: anywhere;
+}
+
+/* ============================================
+   UTILIZATION BAR
+============================================ */
+
+.utilization-bar-bg {
+  background-color: #c8d0f8;
+  border-radius: 8px;
+  height: 12px;
+  margin-bottom: 6px;
+  overflow: hidden;
+  min-width: 100px;
+}
+
+.utilization-bar-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.5s ease;
+}
+
+.util-high {
+  background-color: #8fa3e6;
+}
+
+.util-mid {
+  background-color: #a5b5f0;
+}
+
+.util-low {
+  background-color: #c8d0f8;
+}
+
+/* ============================================
+   STARS
+============================================ */
+
+.star {
+  color: #c8d0f8;
+  font-size: 1.1rem;
+}
+
+.star.filled {
+  color: #a5b5f0;
+}
+
+/* ============================================
+   BENCHMARK INPUTS
+============================================ */
+
+.calendar-table input[type="number"] {
+  width: 70px;
+  max-width: 100%;
+  border: 1px solid #c8d0f8;
+  border-radius: 8px;
+  padding: 6px 8px;
+  color: #4b5bbf;
+  font-size: 0.95rem;
+  background-color: #e6ebfa;
+  text-align: center;
+}
+
+/* ============================================
+   TABLE BUTTONS
+============================================ */
+
+.calendar-table button {
+  background: linear-gradient(90deg, #8fa3e6, #a5b5f0);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.calendar-table button:hover {
+  background: linear-gradient(90deg, #7b91d4, #8fa3e6);
+  box-shadow: 0 4px 12px rgba(143,163,230,0.3);
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   DRILLDOWN SECTION
+============================================ */
+
+.drilldown-cell {
+  background-color: #eef1fc !important;
+  padding: clamp(12px, 2vw, 28px) clamp(10px, 2vw, 24px) !important;
+  border-radius: 0 0 12px 12px;
+}
+
+.drilldown-container {
+  display: flex;
+  gap: clamp(12px, 2vw, 28px);
+  flex-wrap: wrap;
+  align-items: flex-start;
+  width: 100%;
+  min-width: 0;
+}
+
+.drilldown-left {
+  flex: 2 1 380px;
+  min-width: 0;
+  background-color: #f0f4ff;
+  border-left: 4px solid #8fa3e6;
+  border-radius: 10px;
+  padding: clamp(12px, 2vw, 24px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.drilldown-right {
+  flex: 1 1 260px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ============================================
+   GAUGE
+============================================ */
+
+.gauge-container {
+  background-color: #f0f4ff;
+  border-left: 4px solid #8fa3e6;
+  border-radius: 10px;
+  padding: 24px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.gauge-container svg,
+.gauge-container canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ============================================
+   FEEDBACK CARDS
+============================================ */
+
+.task-card {
+  background-color: #f0f4ff;
+  border-left: 4px solid #8fa3e6;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  font-size: 0.95rem;
+  color: #3c4ba8;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  overflow-wrap: anywhere;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(143,163,230,0.2);
+}
+
+/* ============================================
+   PAGINATION
+============================================ */
+
 .pagination-bar {
   display: flex;
   align-items: center;
@@ -322,12 +439,14 @@ h3 {
   border-radius: 10px;
   border-left: 4px solid #8fa3e6;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  min-width: 0;
 }
 
 .page-size-control {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .page-info {
@@ -340,6 +459,7 @@ h3 {
   display: flex;
   gap: 6px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .page-btn {
@@ -370,50 +490,373 @@ h3 {
   color: #fff;
   border-color: transparent;
 }
-/* Global back button + page header */
-.page-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-}
 
-.page-header h2,
-.page-header h3 {
-  margin: 0;
-}
+/* ============================================
+   STATUS COUNTS
+============================================ */
 
-.back-btn {
-  background: #f0f4ff;
-  color: #4b5bbf;
-  border: 1px solid #c8d0f8;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
-  white-space: nowrap;
-}
-
-.back-btn:hover {
-  background: #c8d0f8;
-  transform: translateX(-2px);
-}
-.warn-count {
-  background: #fdecea;
-  color: #c62828;
+.warn-count,
+.ok-count {
   border-radius: 20px;
   padding: 3px 10px;
   font-size: 0.82rem;
   font-weight: 700;
+  white-space: nowrap;
+}
+
+.warn-count {
+  background: #fdecea;
+  color: #c62828;
 }
 
 .ok-count {
   background: #e8f5e9;
   color: #2e7d32;
-  border-radius: 20px;
-  padding: 3px 10px;
-  font-size: 0.82rem;
-  font-weight: 700;
+}
+
+/* ============================================
+   EXPORT BUTTON
+============================================ */
+
+.btn-export {
+  width: auto;
+  min-width: 0;
+  height: auto;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 16px;
+  background: #fff;
+  color: #4b5bbf;
+  border: 1px solid #8fa3e6;
+  border-radius: 8px;
+  box-shadow: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.btn-export:hover:not(:disabled) {
+  background: #eef1ff;
+  transform: translateY(-1px);
+}
+
+.btn-export:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-header .btn-export {
+  margin-left: auto;
+}
+
+/* ============================================
+   LARGE DESKTOP
+============================================ */
+
+@media (min-width: 1400px) {
+  .admin-calendar {
+    padding: 36px 40px;
+  }
+
+  .leaderboard-row td {
+    padding: 16px 18px;
+  }
+
+  .drilldown-container {
+    gap: 28px;
+  }
+}
+
+/* ============================================
+   LAPTOPS
+============================================ */
+
+@media (max-width: 1200px) {
+  .admin-calendar {
+    width: calc(100% - 32px);
+    padding: 24px;
+  }
+
+  .calendar-table {
+    min-width: 850px;
+  }
+
+  .drilldown-left {
+    flex: 1 1 320px;
+  }
+
+  .drilldown-right {
+    flex: 1 1 240px;
+  }
+}
+
+/* ============================================
+   TABLETS
+============================================ */
+
+@media (max-width: 850px) {
+  .admin-calendar {
+    width: calc(100% - 24px);
+    margin: 16px auto;
+    padding: 18px;
+  }
+
+  .calendar-table {
+    min-width: 800px;
+  }
+
+  .drilldown-container {
+    flex-direction: column;
+  }
+
+  .drilldown-left,
+  .drilldown-right {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
+  .drilldown-cell {
+    padding: 16px !important;
+  }
+
+  .controls-bar {
+    gap: 12px;
+  }
+
+  .control-group {
+    flex: 1 1 180px;
+  }
+
+  .control-actions {
+    flex: 1 1 100%;
+  }
+
+  .pagination-bar {
+    align-items: flex-start;
+  }
+}
+
+/* ============================================
+   MOBILE
+============================================ */
+
+@media (max-width: 600px) {
+  .admin-calendar {
+    width: calc(100% - 16px);
+    margin: 8px auto;
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+  }
+
+  .page-header {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .page-header h2 {
+    font-size: 1.15rem;
+  }
+
+  .back-btn {
+    padding: 7px 11px;
+    font-size: 0.8rem;
+  }
+
+  .page-header .btn-export {
+    margin-left: 0;
+  }
+
+  .btn-export {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+
+  .week-controls {
+    padding: 12px;
+    gap: 8px;
+    font-size: 0.85rem;
+  }
+
+  .week-controls input {
+    width: 70px;
+    margin-left: 0;
+  }
+
+  .controls-bar {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .control-group {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .control-input,
+  .control-select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .control-actions {
+    flex-direction: row;
+  }
+
+  .btn-apply,
+  .btn-clear {
+    flex: 1;
+    padding: 9px 10px;
+  }
+
+  .calendar-table {
+    min-width: 800px;
+    font-size: 0.8rem;
+  }
+
+  .calendar-table th {
+    font-size: 0.72rem;
+    padding: 10px 8px;
+  }
+
+  .leaderboard-row td {
+    padding: 10px 8px;
+    font-size: 0.82rem;
+  }
+
+  .task-title {
+    font-size: 0.85rem;
+  }
+
+  .calendar-table input[type="number"] {
+    width: 60px;
+    font-size: 0.8rem;
+    padding: 6px 4px;
+  }
+
+  .calendar-table button {
+    padding: 7px 10px;
+    font-size: 0.78rem;
+  }
+
+  .drilldown-cell {
+    padding: 10px !important;
+  }
+
+  .drilldown-left {
+    padding: 14px;
+  }
+
+  .drilldown-right {
+    gap: 12px;
+  }
+
+  .gauge-container {
+    padding: 16px 10px;
+  }
+
+  .task-card {
+    padding: 11px;
+    font-size: 0.85rem;
+  }
+
+  .pagination-bar {
+    padding: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .page-size-control,
+  .page-controls {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .page-info {
+    font-size: 0.8rem;
+  }
+
+  .page-btn {
+    padding: 6px 9px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ============================================
+   VERY SMALL PHONES
+============================================ */
+
+@media (max-width: 380px) {
+  .admin-calendar {
+    width: calc(100% - 12px);
+    padding: 9px;
+  }
+
+  .page-header {
+    gap: 8px;
+  }
+
+  .page-header h2 {
+    font-size: 1rem;
+  }
+
+  .controls-bar {
+    padding: 10px;
+  }
+
+  .control-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-apply,
+  .btn-clear {
+    width: 100%;
+  }
+
+  .pagination-bar {
+    padding: 10px;
+  }
+
+  .page-controls {
+    gap: 4px;
+  }
+
+  .page-btn {
+    min-width: 30px;
+    padding: 5px 7px;
+  }
+
+  .drilldown-left {
+    padding: 10px;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+============================================ */
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #4b5bbf;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

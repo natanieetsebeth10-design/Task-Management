@@ -11,37 +11,99 @@
       <input type="text" id="assigner" formControlName="assigner" readonly>
     </div>
 
-    <div class="form-group">
-      <label for="assignee">Assignee</label>
-      <select id="assignee" formControlName="assigneeId">
-        <option value="" disabled>Select assignee</option>
-        <option *ngIf="loading" disabled>Loading employees...</option>
-        <option *ngFor="let user of assignees" [value]="user.id">
-          {{ user.name }}
-        </option>
-      </select>
-      <div class="field-hint" *ngIf="!loading && assignees.length === 0">
-        No other users found in your company.
+    <!-- NON-ADMINS: can only assign to themselves -->
+    <div class="form-group" *ngIf="!isAdmin">
+      <label>Assignee</label>
+      <div class="self-assign">
+        <span class="chip lead">
+          <span class="chip-name">{{ assignerName }}</span>
+          <span class="chip-lead">You</span>
+        </span>
+      </div>
+    
+    </div>
+
+    <!-- ADMINS: search, click to add, chips show who is on the task -->
+    <div class="form-group assignee-picker" *ngIf="isAdmin">
+      <label for="assigneeSearch">Assignee(s)</label>
+
+      <div class="picker-box" [class.open]="dropdownOpen" (click)="focusSearch()">
+
+        <span class="chip" *ngFor="let u of selectedUsers; let i = index" [class.lead]="i === 0">
+          <span class="chip-name">{{ u.name }}{{ u.id === currentUserId ? ' (you)' : '' }}</span>
+          <span class="chip-lead" *ngIf="i === 0 && selectedUsers.length > 1">Lead</span>
+          <button type="button" class="chip-star" *ngIf="i > 0"
+                  (click)="makeLead(u.id!); $event.stopPropagation()"
+                  title="Make group lead" aria-label="Make group lead">☆</button>
+          <button type="button" class="chip-x"
+                  (click)="removeUser(u.id!); $event.stopPropagation()"
+                  [attr.aria-label]="'Remove ' + u.name">✕</button>
+        </span>
+
+        <input
+          #searchInput
+          id="assigneeSearch"
+          class="picker-input"
+          type="text"
+          autocomplete="off"
+          role="combobox"
+          [attr.aria-expanded]="dropdownOpen"
+          [value]="search"
+          [placeholder]="selectedUsers.length ? 'Add another person…' : 'Search by name or email…'"
+          (input)="onSearchInput($any($event.target).value)"
+          (focus)="openDropdown()"
+          (blur)="closeDropdown()"
+          (keydown)="onKeydown($event)"
+        >
+      </div>
+
+      <ul class="picker-dropdown" *ngIf="dropdownOpen" role="listbox">
+        <li *ngIf="loading" class="picker-note">Loading employees…</li>
+
+        <li *ngFor="let u of matches; let i = index"
+            class="picker-option"
+            [class.active]="i === highlight"
+            role="option"
+            (mousedown)="$event.preventDefault(); addUser(u)"
+            (mouseenter)="highlight = i">
+          <span class="opt-avatar">{{ u.name[0]?.toUpperCase() }}</span>
+          <span class="opt-text">
+            <span class="opt-name">{{ u.name }} <span class="opt-role" *ngIf="u.id === currentUserId">You</span><span class="opt-role" *ngIf="u.role === 'admin' && u.id !== currentUserId">Admin</span></span>
+            <span class="opt-email">{{ u.email }}</span>
+          </span>
+        </li>
+
+        <li *ngIf="!loading && matches.length === 0 && search" class="picker-note">
+          No one matches that search.
+        </li>
+        <li *ngIf="!loading && matches.length === 0 && !search && assignees.length > 0" class="picker-note">
+          Everyone is already added.
+        </li>
+        <li *ngIf="!loading && assignees.length === 0" class="picker-note">
+          No other users found in your company.
+        </li>
+        <li *ngIf="moreCount > 0" class="picker-note">
+          +{{ moreCount }} more. Keep typing to narrow it down.
+        </li>
+      </ul>
+
+      <div class="field-hint">
+        Add one person, or several for a group task. The first person is the group lead
       </div>
     </div>
 
     <div class="form-group">
       <label for="urgency">Urgency</label>
       <select id="urgency" formControlName="urgency">
-        <option value="low"> Low</option>
-        <option value="medium"> Medium</option>
-        <option value="high"> High</option>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
       </select>
     </div>
 
     <div class="form-group">
       <label for="details">Task Details</label>
-      <textarea
-        id="details"
-        formControlName="details"
-        placeholder="Describe the task..."
-        rows="4"
-      ></textarea>
+      <textarea id="details" formControlName="details" placeholder="Describe the task..." rows="4"></textarea>
     </div>
 
     <div class="form-row">
@@ -49,7 +111,6 @@
         <label for="startDate">Start Date</label>
         <input type="date" id="startDate" formControlName="startDate">
       </div>
-
       <div class="form-group">
         <label for="dueDate">Due Date</label>
         <input type="date" id="dueDate" formControlName="dueDate">
@@ -59,6 +120,12 @@
     <div class="form-group">
       <label for="duration">Estimated Duration (hours)</label>
       <input type="number" id="duration" formControlName="duration" min="1">
+    </div>
+
+    <div class="form-group">
+      <label for="taskLink">Link to brief or files (optional)</label>
+      <input type="url" id="taskLink" formControlName="taskLink" placeholder="Paste a OneDrive or Drive link">
+      <div class="field-hint">Make sure the link is shared so the member can open it.</div>
     </div>
 
     <div *ngIf="success" class="success-message">{{ success }}</div>

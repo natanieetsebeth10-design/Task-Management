@@ -2,7 +2,7 @@
 
   <div class="page-header">
     <button class="back-btn" (click)="goBack()">← Back</button>
-    <h3>🔍 Task Overview</h3>
+    <h3> Task Overview</h3>
   </div>
 
   <!-- SEARCH FILTERS -->
@@ -14,6 +14,7 @@
         class="control-input"
         type="text"
         [(ngModel)]="searchTaskId"
+        (keyup.enter)="applyFilters()"
         placeholder="e.g. TASK-0001"
       />
     </div>
@@ -24,6 +25,7 @@
         class="control-input"
         type="text"
         [(ngModel)]="searchAssignee"
+        (keyup.enter)="applyFilters()"
         placeholder="Search by name..."
       />
     </div>
@@ -48,8 +50,9 @@
     </div>
 
     <div class="control-group control-actions">
-      <button class="btn-apply" (click)="applyFilters()">🔍 Search</button>
+      <button class="btn-apply" (click)="applyFilters()">Search</button>
       <button class="btn-clear" (click)="clearFilters()">✕ Clear</button>
+      <button class="btn-export" type="button" (click)="exportPdf()">Export PDF</button>
     </div>
 
   </div>
@@ -151,7 +154,7 @@
     <div class="page-size-control">
       <label class="control-label">Rows per page</label>
       <select class="control-select small" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
-        <option *ngFor="let s of pageSizeOptions" [value]="s">{{ s }}</option>
+        <option *ngFor="let s of pageSizeOptions" [ngValue]="s">{{ s }}</option>
       </select>
     </div>
 

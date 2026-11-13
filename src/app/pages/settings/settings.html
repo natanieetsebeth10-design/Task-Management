@@ -58,9 +58,9 @@
           placeholder="Repeat new password"
         />
         <div class="field-error"
-          *ngIf="passwordForm.touched && passwordForm.hasError('mismatch')">
-          Passwords do not match.
-        </div>
+  *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('weak')">
+  {{ passwordHint }}
+</div>
       </div>
 
       <div class="success-message" *ngIf="passwordSuccess">{{ passwordSuccess }}</div>
@@ -75,6 +75,18 @@
       </button>
 
     </form>
+  </div>
+
+    <!-- DATA BACKUP CARD (admin only) -->
+  <div class="settings-card" *ngIf="isAdmin">
+    <div class="card-header">Data Backup</div>
+    <p style="color:#3c4ba8; font-size:0.95rem; margin-bottom:16px;">
+      Download a copy of your company's users and tasks. Save it somewhere safe, such as OneDrive.
+    </p>
+    <button class="btn-primary" type="button" (click)="backupNow()" [disabled]="backingUp">
+      {{ backingUp ? 'Backing up…' : 'Backup now' }}
+    </button>
+    <div class="success-message" *ngIf="backupMsg">{{ backupMsg }}</div>
   </div>
 
   <!-- LOGOUT CARD -->

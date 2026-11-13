@@ -15,7 +15,7 @@
         <button (click)="currentWeek()">Current Week</button>
         <button (click)="nextWeek()">Next Week</button>
       </div>
-
+<div class="calendar-table-wrapper">
       <table class="calendar-table">
         <thead>
           <tr>
@@ -30,22 +30,42 @@
             <td class="status-label">Received</td>
             <td *ngFor="let day of weekDays">
               <ng-container *ngFor="let task of receivedTasksByDay[datePipe.transform(day,'yyyy-MM-dd')!] || []">
-                <div class="task-card" [ngClass]="getTaskClass(task)" [class.due-today]="task.dueDate === today">
+                <div class="task-card" [ngClass]="getTaskClass(task)" [class.due-today]="task.dueDate === today"
+                     (click)="openDetails(task, $event)">
                   <div class="task-title">{{ task.details }}</div>
                   <div class="task-urgency">Urgency: {{ task.urgency | titlecase }}</div>
+
+                  <div *ngIf="task.isGroup" class="stage-tag tag-orange">
+                    Group: {{ task.assigneeNames?.join(', ') }}
+                  </div>
+                  <div *ngIf="task.isGroup && !isLead(task)" class="stage-tag tag-yellow">
+                    {{ leadName(task) }} accepts and submits
+                  </div>
+
                   <div *ngIf="task.rejectCount && task.rejectCount > 0" class="stage-tag tag-red">
-                     Rejected — needs revision
+                    Rejected — needs revision
+                  </div>
+                  <div *ngIf="task.adminFeedback && task.rejectCount && task.rejectCount > 0" class="task-urgency">
+                    Feedback: {{ task.adminFeedback }}
                   </div>
                   <div *ngIf="task.reassigned" class="stage-tag tag-orange">
-                     Reassigned to you
+                    Reassigned to you
                   </div>
                   <div *ngIf="getDaysUntilDue(task) <= 2 && getDaysUntilDue(task) >= 0 && !(task.rejectCount && task.rejectCount > 0) && !task.reassigned" class="stage-tag tag-yellow">
-                     Due in {{ getDaysUntilDue(task) === 0 ? 'today' : getDaysUntilDue(task) + ' day(s)' }}
+                    Due in {{ getDaysUntilDue(task) === 0 ? 'today' : getDaysUntilDue(task) + ' day(s)' }}
                   </div>
-                  <div *ngIf="task.dueDate === today" class="due-today-tag"> Due Today</div>
-                  <div class="task-actions">
+                  <div *ngIf="task.dueDate === today" class="due-today-tag">Due Today</div>
+
+                  <div *ngIf="task.taskLink">
+                    <a [href]="task.taskLink" target="_blank" rel="noopener noreferrer">Open brief</a>
+                  </div>
+
+                  <div class="task-actions" *ngIf="isLead(task)">
                     <button (click)="acceptTask(task)">Accept</button>
                     <button class="btn-reject" (click)="rejectTask(task)">Reject</button>
+                  </div>
+                  <div class="task-actions">
+                    <button type="button" class="btn-chat" (click)="openChat(task)">Chat</button>
                   </div>
                 </div>
               </ng-container>
@@ -57,19 +77,36 @@
             <td class="status-label">To Do</td>
             <td *ngFor="let day of weekDays">
               <ng-container *ngFor="let task of todoTasksByDay[datePipe.transform(day,'yyyy-MM-dd')!] || []">
-                <div class="task-card" [ngClass]="getTaskClass(task)" [class.due-today]="task.dueDate === today">
+                <div class="task-card" [ngClass]="getTaskClass(task)" [class.due-today]="task.dueDate === today"
+                     (click)="openDetails(task, $event)">
                   <div class="task-title">{{ task.details }}</div>
                   <div class="task-urgency">Urgency: {{ task.urgency | titlecase }}</div>
+
+                  <div *ngIf="task.isGroup" class="stage-tag tag-orange">
+                    Group: {{ task.assigneeNames?.join(', ') }}
+                  </div>
+                  <div *ngIf="task.isGroup && !isLead(task)" class="stage-tag tag-yellow">
+                    {{ leadName(task) }} accepts and submits
+                  </div>
+
                   <div *ngIf="task.reassigned" class="stage-tag tag-orange">
-                     Reassigned to you
+                    Reassigned to you
                   </div>
                   <div *ngIf="getDaysUntilDue(task) <= 2 && getDaysUntilDue(task) >= 0 && !task.reassigned" class="stage-tag tag-yellow">
-                     Due in {{ getDaysUntilDue(task) === 0 ? 'today' : getDaysUntilDue(task) + ' day(s)' }}
+                    Due in {{ getDaysUntilDue(task) === 0 ? 'today' : getDaysUntilDue(task) + ' day(s)' }}
                   </div>
-                  <div *ngIf="task.dueDate === today" class="due-today-tag"> Due Today</div>
-                  <div *ngIf="task.autoAccepted" class="auto-tag"> Auto-accepted</div>
-                  <div class="task-actions">
+                  <div *ngIf="task.dueDate === today" class="due-today-tag">Due Today</div>
+                  <div *ngIf="task.autoAccepted" class="auto-tag">Auto-accepted</div>
+
+                  <div *ngIf="task.taskLink">
+                    <a [href]="task.taskLink" target="_blank" rel="noopener noreferrer">Open brief</a>
+                  </div>
+
+                  <div class="task-actions" *ngIf="isLead(task)">
                     <button (click)="submitForApproval(task)">Submit for Approval</button>
+                  </div>
+                  <div class="task-actions">
+                    <button type="button" class="btn-chat" (click)="openChat(task)">Chat</button>
                   </div>
                 </div>
               </ng-container>
@@ -81,10 +118,16 @@
             <td class="status-label">Completed</td>
             <td *ngFor="let day of weekDays">
               <ng-container *ngFor="let task of completedTasksByDay[datePipe.transform(day,'yyyy-MM-dd')!] || []">
-                <div class="task-card" [ngClass]="getTaskClass(task)">
+                <div class="task-card" [ngClass]="getTaskClass(task)" (click)="openDetails(task, $event)">
                   <div class="task-title">{{ task.details }}</div>
                   <div class="task-urgency">Urgency: {{ task.urgency | titlecase }}</div>
-                  <div *ngIf="task.autoApproved" class="auto-tag"> Auto-approved</div>
+                  <div *ngIf="task.isGroup" class="stage-tag tag-orange">
+                    Group: {{ task.assigneeNames?.join(', ') }}
+                  </div>
+                  <div *ngIf="task.autoApproved" class="auto-tag">Auto-approved</div>
+                  <div class="task-actions">
+                    <button type="button" class="btn-chat" (click)="openChat(task)">Chat</button>
+                  </div>
                 </div>
               </ng-container>
             </td>
@@ -92,6 +135,7 @@
 
         </tbody>
       </table>
+      </div>
     </div>
 
     <!-- RIGHT: today panel -->
@@ -108,10 +152,10 @@
       </div>
 
       <div class="today-empty" *ngIf="todayTasks.length === 0">
-         Nothing due today!
+        Nothing due today!
       </div>
 
-      <div class="today-task-card" *ngFor="let task of todayTasks">
+      <div class="today-task-card" *ngFor="let task of todayTasks" (click)="openDetails(task, $event)">
         <div class="today-task-title">{{ task.details }}</div>
         <div class="today-task-meta">
           <span class="urgency-dot urgency-{{ task.urgency }}"></span>
@@ -119,13 +163,58 @@
           <span class="today-task-status">· {{ task.status | titlecase }}</span>
         </div>
         <div class="today-task-actions">
-          <button class="today-btn accept" *ngIf="task.status === 'received'" (click)="acceptTask(task)">Accept</button>
-          <button class="today-btn submit" *ngIf="task.status === 'approved'" (click)="submitForApproval(task)">Submit</button>
-          <button class="today-btn reject" *ngIf="task.status === 'received'" (click)="rejectTask(task)">Reject</button>
+          <button class="today-btn accept" *ngIf="task.status === 'received' && isLead(task)" (click)="acceptTask(task)">Accept</button>
+          <button class="today-btn submit" *ngIf="task.status === 'approved' && isLead(task)" (click)="submitForApproval(task)">Submit</button>
+          <button class="today-btn reject" *ngIf="task.status === 'received' && isLead(task)" (click)="rejectTask(task)">Reject</button>
+          <button class="today-btn" type="button" (click)="openChat(task)">Chat</button>
         </div>
       </div>
-
     </div>
 
   </div>
+
+  <!-- SUBMIT POP-UP (link + note) -->
+  <div class="modal-backdrop" *ngIf="submitTarget" (click)="cancelSubmit()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h3>Submit task</h3>
+      <p class="modal-task">{{ submitTarget.details }}</p>
+
+      <label>Link to your work</label>
+      <input type="url" [(ngModel)]="submissionLink" placeholder="Paste a OneDrive or Drive link">
+      <small>Make sure the link is shared so your admin can open it.</small>
+
+      <label>Note for your admin (optional)</label>
+      <textarea rows="3" [(ngModel)]="submissionNote"></textarea>
+
+      <p class="error-message" *ngIf="submitError">{{ submitError }}</p>
+
+      <div class="modal-actions">
+        <button type="button" (click)="cancelSubmit()">Cancel</button>
+        <button type="button" (click)="confirmSubmit()" [disabled]="submitting">
+          {{ submitting ? 'Submitting…' : 'Submit for approval' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DECLINE POP-UP -->
+  <div class="modal-backdrop" *ngIf="rejectTarget" (click)="cancelReject()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h3>Decline task</h3>
+      <p class="modal-task">{{ rejectTarget.details }}</p>
+
+      <label>Why are you declining this task?</label>
+      <textarea rows="3" [(ngModel)]="rejectReason" placeholder="e.g. I'm on leave that week"></textarea>
+
+      <p class="error-message" *ngIf="rejectError">{{ rejectError }}</p>
+
+      <div class="modal-actions">
+        <button type="button" (click)="cancelReject()">Cancel</button>
+        <button type="button" (click)="confirmReject()" [disabled]="rejecting">
+          {{ rejecting ? 'Declining…' : 'Decline task' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>

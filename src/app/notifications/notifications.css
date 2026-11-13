@@ -97,3 +97,21 @@
   border-radius: 50%;
   background-color: #8fa3e6;
 }
+.notif-link { margin-top: 6px; font-size: 12px; font-weight: 600; color: #4f56b5; }
+.back-btn {
+  background: #f0f4ff;
+  color: #4b5bbf;
+  border: 1px solid #c8d0f8;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.back-btn:hover {
+  background: #c8d0f8;
+  transform: translateX(-2px);
+}

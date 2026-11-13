@@ -1,0 +1,108 @@
+<div class="detail-dialog">
+
+  <!-- TOP: task ID + status -->
+  <div class="detail-top">
+    <div class="id-block">
+      <span class="id-label">Task ID</span>
+      <span class="id-badge" [class.id-missing]="!task.taskNumber">
+        {{ task.taskNumber || 'No ID' }}
+      </span>
+    </div>
+    <span class="status-pill" [ngClass]="'status-' + task.status">{{ task.status | titlecase }}</span>
+  </div>
+
+  <!-- TASK DETAILS -->
+  <div class="section">
+    <div class="section-title">Task details</div>
+    <div class="details-box">{{ task.details }}</div>
+  </div>
+
+  <div class="tag-row" *ngIf="overdue || task.reassigned || task.autoAccepted || task.autoApproved || (task.rejectCount ?? 0) > 0">
+    <span class="tag tag-red" *ngIf="overdue">Overdue</span>
+    <span class="tag tag-red" *ngIf="(task.rejectCount ?? 0) > 0">Rejected {{ task.rejectCount }}×</span>
+    <span class="tag tag-orange" *ngIf="task.reassigned">Reassigned</span>
+    <span class="tag tag-blue" *ngIf="task.autoAccepted">Auto-accepted</span>
+    <span class="tag tag-blue" *ngIf="task.autoApproved">Auto-approved</span>
+  </div>
+
+  <!-- PEOPLE -->
+  <div class="section">
+    <div class="section-title">People</div>
+    <div class="detail-grid">
+      <div class="cell"><span class="k">Assigned by</span><span class="v">{{ task.assigner || '—' }}</span></div>
+      <div class="cell" *ngIf="!isGroup"><span class="k">Assignee</span><span class="v">{{ assignee }}</span></div>
+      <div class="cell" *ngIf="isGroup"><span class="k">Group lead</span><span class="v">{{ members[0] }}</span></div>
+      <div class="cell wide" *ngIf="isGroup"><span class="k">Group members</span><span class="v">{{ members.join(', ') }}</span></div>
+    </div>
+  </div>
+
+  <!-- SCHEDULE -->
+  <div class="section">
+    <div class="section-title">Schedule</div>
+    <div class="detail-grid">
+      <div class="cell"><span class="k">Start date</span><span class="v">{{ startDay || '—' }}</span></div>
+      <div class="cell">
+        <span class="k">Due date</span>
+        <span class="v" [class.overdue-text]="overdue">{{ dueDay || '—' }}</span>
+        <span class="due-note" *ngIf="dueNote" [class.overdue-text]="overdue">{{ dueNote }}</span>
+      </div>
+      <div class="cell" *ngIf="submittedDay"><span class="k">Submitted</span><span class="v">{{ submittedDay }}</span></div>
+      <div class="cell" *ngIf="completedDay"><span class="k">Completed</span><span class="v">{{ completedDay }}</span></div>
+    </div>
+  </div>
+
+  <!-- INFO -->
+  <div class="section">
+    <div class="section-title">Info</div>
+    <div class="detail-grid three">
+      <div class="cell">
+        <span class="k">Urgency</span>
+        <span class="urgency-badge" [ngClass]="'urgency-' + task.urgency">{{ task.urgency | titlecase }}</span>
+      </div>
+      <div class="cell"><span class="k">Duration</span><span class="v">{{ task.duration ? task.duration + 'h' : '—' }}</span></div>
+      <div class="cell"><span class="k">Rejections</span><span class="v">{{ task.rejectCount ?? 0 }}</span></div>
+    </div>
+  </div>
+
+  <!-- LINKS -->
+  <div class="section">
+    <div class="section-title">Links and files</div>
+
+    <div class="link-row" *ngIf="task.taskLink">
+      <span>Brief</span>
+      <a [href]="task.taskLink" target="_blank" rel="noopener noreferrer">Open</a>
+    </div>
+
+    <div class="link-row" *ngIf="task.submissionLink">
+      <span>Submitted work</span>
+      <a [href]="task.submissionLink" target="_blank" rel="noopener noreferrer">Open</a>
+    </div>
+
+    <div class="muted" *ngIf="!task.taskLink && !task.submissionLink">No links attached.</div>
+
+    <div class="note" *ngIf="task.submissionNote">
+      <strong>{{ isGroup ? members[0] : assignee }}'s note:</strong> {{ task.submissionNote }}
+    </div>
+  </div>
+
+  <!-- REJECTION FEEDBACK -->
+  <div class="section" *ngIf="feedback && (task.rejectCount ?? 0) > 0">
+    <div class="section-title">Feedback from admin</div>
+    <div class="note">{{ feedback }}</div>
+  </div>
+
+  <!-- RATING -->
+  <div class="section" *ngIf="task.rating as r">
+    <div class="section-title">Rating</div>
+    <div class="rating-row">
+      <span>Quality <strong>{{ r.quality }}/5</strong></span>
+      <span>Speed <strong>{{ r.speed }}/5</strong></span>
+    </div>
+    <div class="note" *ngIf="r.comment">{{ r.comment }}</div>
+  </div>
+
+  <div class="detail-actions">
+    <button type="button" class="btn-close" (click)="close()">Close</button>
+  </div>
+
+</div>

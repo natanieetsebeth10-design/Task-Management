@@ -1,0 +1,50 @@
+<div class="page-header">
+  <button class="back-btn" type="button" (click)="goBack()">← Back</button>
+  <h2>Task Chats</h2>
+</div>
+
+<div class="chats-layout">
+
+  <!-- LEFT: task list -->
+  <aside class="chat-list">
+    <div class="list-title">Your conversations</div>
+
+    <div class="list-empty" *ngIf="loading">Loading…</div>
+    <div class="list-empty" *ngIf="error">{{ error }}</div>
+    <div class="list-empty" *ngIf="!loading && !error && tasks.length === 0">No tasks yet.</div>
+
+    <button type="button" class="chat-item" *ngFor="let t of tasks"
+            [class.active]="t.id === selected?.id" (click)="select(t)">
+      <div class="item-top">
+        <span class="item-title">{{ t.details }}</span>
+        <span class="status-pill" [ngClass]="'status-' + t.status">{{ t.status }}</span>
+      </div>
+      <div class="item-sub">
+        {{ t.taskNumber }}
+        <span *ngIf="me?.role === 'admin' && t.assigneeName"> · {{ t.assigneeName }}</span>
+      </div>
+    </button>
+  </aside>
+
+  <!-- RIGHT: chat -->
+  <section class="chat-main">
+    <ng-container *ngIf="selected; else pick">
+      <div class="chat-main-header">
+        <div class="header-title">{{ selected.details }}</div>
+        <div class="header-sub">
+          {{ selected.taskNumber }}
+          <span class="status-pill" [ngClass]="'status-' + selected.status">{{ selected.status }}</span>
+        </div>
+      </div>
+      <app-chat-panel [taskId]="selected.id!" [userName]="me?.name || ''"></app-chat-panel>
+    </ng-container>
+
+    <ng-template #pick>
+      <div class="pick-state">
+        <div class="pick-icon">💬</div>
+        <div>Select a task to start chatting.</div>
+      </div>
+    </ng-template>
+  </section>
+
+</div>

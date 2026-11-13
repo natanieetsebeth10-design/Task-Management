@@ -1,0 +1,40 @@
+<div class="chat-dialog">
+
+  <div class="chat-header">
+    <div class="chat-header-text">
+      <div class="chat-label">Task chat</div>
+      <div class="chat-title">{{ data.title }}</div>
+    </div>
+    <button type="button" class="chat-x" (click)="close()" aria-label="Close chat">✕</button>
+  </div>
+
+  <div class="chat-body" #scroller>
+    <div class="chat-info" *ngIf="loading">Loading messages…</div>
+    <div class="chat-error" *ngIf="error">{{ error }}</div>
+
+    <div class="chat-info" *ngIf="!loading && !error && messages.length === 0">
+      No messages yet. Say hello
+    </div>
+
+    <div class="msg-row" *ngFor="let m of messages" [class.mine]="m.senderId === myId">
+      <div class="msg-bubble">
+        <div class="msg-name" *ngIf="m.senderId !== myId">{{ m.senderName }}</div>
+        <div class="msg-text">{{ m.text }}</div>
+        <div class="msg-time">{{ m.createdAt | date:'d MMM, HH:mm' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-composer">
+    <textarea
+      rows="2"
+      [(ngModel)]="draft"
+      placeholder="Type a message… (Enter to send)"
+      (keydown.enter)="onEnter($event)"
+    ></textarea>
+    <button type="button" class="send-btn" (click)="send()" [disabled]="sending || !draft.trim()">
+      {{ sending ? '…' : 'Send' }}
+    </button>
+  </div>
+
+</div>

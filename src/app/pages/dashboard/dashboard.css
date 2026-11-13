@@ -115,10 +115,21 @@ html, body {
 }
 
 .btn-icon {
-  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.25);
   flex-shrink: 0;
 }
 
+.btn-icon app-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
 /* Loading */
 .loading-text {
   text-align: center;

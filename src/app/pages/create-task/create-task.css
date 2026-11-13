@@ -204,3 +204,127 @@
     order: 1;
   }
 }
+/* Append to the bottom of create-task.css */
+
+.create-task-container .assignee-picker { position: relative; }
+
+/* The box that holds the chips and the search input */
+.create-task-container .picker-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 6px 10px;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid #c8d0f8;
+  border-radius: 10px;
+  cursor: text;
+}
+.create-task-container .picker-box.open { border-color: #8fa3e6; box-shadow: 0 0 0 3px rgba(143,163,230,0.2); }
+
+.create-task-container .picker-input {
+  flex: 1;
+  min-width: 140px;
+  width: auto;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+  padding: 6px 2px;
+  margin: 0;
+  font: inherit;
+  color: #3c4ba8;
+}
+
+/* Chips (selected people) */
+.create-task-container .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #e6ebfa;
+  color: #3c4ba8;
+  border-radius: 16px;
+  padding: 3px 4px 3px 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.create-task-container .chip.lead { background: #a5b5f0; color: #fff; }
+.create-task-container .chip-lead {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(255,255,255,0.3);
+  border-radius: 8px;
+  padding: 1px 6px;
+}
+
+/* Small buttons inside chips (reset so global button styles can't stretch them) */
+.create-task-container .chip-x,
+.create-task-container .chip-star {
+  width: 22px;
+  min-width: 0;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  box-shadow: none;
+  color: inherit;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.7;
+}
+.create-task-container .chip-x:hover,
+.create-task-container .chip-star:hover { background: rgba(0,0,0,0.1); opacity: 1; transform: none; }
+
+/* Dropdown list */
+.create-task-container .picker-dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% - 22px);          /* sits just under the box (above the hint text) */
+  z-index: 50;
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #c8d0f8;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(60,75,168,0.15);
+}
+.create-task-container .picker-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.create-task-container .picker-option.active { background: #eef1ff; }
+.create-task-container .opt-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #a5b5f0; color: #fff; font-weight: 700; font-size: 0.8rem;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.create-task-container .opt-text { display: flex; flex-direction: column; min-width: 0; }
+.create-task-container .opt-name { font-weight: 600; color: #3c4ba8; font-size: 0.92rem; }
+.create-task-container .opt-email { font-size: 0.78rem; color: #8fa3e6; overflow: hidden; text-overflow: ellipsis; }
+.create-task-container .picker-note { padding: 8px 10px; font-size: 0.85rem; color: #8fa3e6; }
+.create-task-container .picker-box .picker-input,
+.create-task-container .picker-box .picker-input:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+  border-radius: 0;
+}

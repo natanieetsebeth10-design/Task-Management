@@ -1,0 +1,60 @@
+/* src/app/pages/task-detail-dialog/task-detail-dialog.css */
+.detail-dialog { padding: 22px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #3c4ba8; max-height: 80vh; overflow-y: auto; }
+
+/* Top row: task ID + status */
+.detail-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+.id-block { display: flex; flex-direction: column; gap: 3px; }
+.id-label { font-size: 0.7rem; font-weight: 700; color: #8fa3e6; text-transform: uppercase; letter-spacing: 0.05em; }
+.id-badge { font-family: 'Courier New', monospace; font-size: 1.25rem; font-weight: 700; color: #4b5bbf; background: #e6ebfa; border-radius: 8px; padding: 4px 12px; align-self: flex-start; }
+.id-badge.id-missing { color: #8fa3e6; font-size: 1rem; font-weight: 600; }
+
+.status-pill { font-size: 0.78rem; font-weight: 700; border-radius: 12px; padding: 5px 14px; white-space: nowrap; background: #e6ebfa; color: #4b5bbf; }
+.status-received  { background: #f5f3ff; color: #7c3aed; }
+.status-approved  { background: #f0fdf4; color: #16a34a; }
+.status-submitted { background: #fefce8; color: #ca8a04; }
+.status-completed { background: #eff6ff; color: #2563eb; }
+.status-rejected  { background: #fef2f2; color: #dc2626; }
+
+/* Sections */
+.section { margin-bottom: 16px; }
+.section-title { font-size: 0.72rem; font-weight: 700; color: #8fa3e6; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+
+/* Task details text */
+.details-box { background: #f0f4ff; border-left: 4px solid #8fa3e6; border-radius: 8px; padding: 12px 14px; font-size: 1rem; font-weight: 600; line-height: 1.45; color: #3c4ba8; white-space: pre-wrap; word-break: break-word; }
+
+/* Tags */
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: -6px 0 16px; }
+.tag { font-size: 0.72rem; font-weight: 700; border-radius: 6px; padding: 2px 8px; }
+.tag-red { background: #fef2f2; color: #dc2626; }
+.tag-orange { background: #fff7ed; color: #ea580c; }
+.tag-blue { background: #e6ebfa; color: #4b5bbf; }
+
+/* Label / value grids */
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; background: #f0f4ff; border-radius: 12px; padding: 12px 14px; }
+.detail-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+.cell { display: flex; flex-direction: column; gap: 3px; }
+.k { font-size: 0.7rem; font-weight: 700; color: #8fa3e6; text-transform: uppercase; letter-spacing: 0.04em; }
+.v { font-size: 0.95rem; font-weight: 600; color: #3c4ba8; }
+.due-note { font-size: 0.78rem; font-weight: 600; color: #8fa3e6; }
+.overdue-text { color: #dc2626; }
+
+/* Urgency badge */
+.urgency-badge { font-size: 0.78rem; font-weight: 700; border-radius: 10px; padding: 2px 10px; align-self: flex-start; background: #e6ebfa; color: #4b5bbf; }
+.urgency-low    { background: #e8f5e9; color: #388e3c; }
+.urgency-medium { background: #fff3e0; color: #e65100; }
+.urgency-high   { background: #fdecea; color: #c62828; }
+
+/* Links and notes */
+.link-row { display: flex; justify-content: space-between; align-items: center; background: #f0f4ff; border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; font-size: 0.9rem; }
+.link-row a { color: #5a67d8; font-weight: 700; text-decoration: none; }
+.link-row a:hover { text-decoration: underline; }
+.note { background: #f0f4ff; border-radius: 8px; padding: 8px 12px; font-size: 0.9rem; white-space: pre-wrap; margin-top: 6px; }
+.muted { color: #8fa3e6; font-size: 0.88rem; }
+.rating-row { display: flex; gap: 20px; font-size: 0.92rem; }
+
+/* Close button */
+.detail-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
+.btn-close { background: #a5b5f0; color: #fff; border: none; border-radius: 8px; padding: 8px 20px; font-weight: 600; cursor: pointer; }
+.btn-close:hover { background: #8fa3e6; }
+
+.cell.wide { grid-column: 1 / -1; }

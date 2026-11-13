@@ -360,6 +360,48 @@
   box-shadow: 0 2px 8px rgba(143,163,230,0.3);
 }
 
+.btn-export {
+  width: auto;
+  min-width: 0;
+  height: auto;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  background: #fff;
+  color: #4b5bbf;
+  border: 1px solid #8fa3e6;
+  border-radius: 8px;
+  box-shadow: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.btn-export:hover:not(:disabled) { background: #eef1ff; transform: translateY(-1px); }
+.btn-export:disabled { opacity: 0.5; cursor: not-allowed; }
+ .back-btn {
+  background: #f0f4ff;
+  color: #4b5bbf;
+  border: 1px solid #c8d0f8;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.back-btn:hover {
+  background: #c8d0f8;
+  transform: translateX(-2px);
+}
+/* On the two performance pages the button sits at the right of the header */
+.page-header .btn-export { margin-left: auto; }
+ 
+
 /* ── Responsive ── */
 @media screen and (max-width: 1024px) {
   .controls-bar { padding: 18px 16px; gap: 14px; }

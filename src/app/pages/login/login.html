@@ -1,26 +1,83 @@
 <div class="login-page">
   <div class="login-container">
+
+    <button type="button" class="back-btn" (click)="goHome()">← Back to home</button>
+
     <h2>SKDL</h2>
 
-    <p *ngIf="error" class="error-message">{{ error }}</p>
+    <p *ngIf="error" class="error-message" role="alert">{{ error }}</p>
+    <p *ngIf="showResetNudge && mode === 'login'" class="reset-nudge">
+      Forgot your password?
+      <button type="button" class="nudge-btn" (click)="openReset()">Reset it</button>
+    </p>
+    <p *ngIf="info" class="info-message">{{ info }}</p>
 
-    <form (ngSubmit)="login()">
+    <!-- LOGIN -->
+    <form *ngIf="mode === 'login'" (ngSubmit)="login()">
       <div class="form-group">
-        <label>Email</label>
-        <input type="email" [(ngModel)]="email" name="email" required>
+        <label for="email">Email</label>
+        <input id="email" type="email" [(ngModel)]="email" (ngModelChange)="onInput()" name="email"
+               autocomplete="username" required>
       </div>
 
       <div class="form-group password-group">
-        <label>Password</label>
-        <div class="password-wrapper">
-          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" required>
-          <span class="toggle-password" (click)="togglePassword()">
-            {{ showPassword ? '👁️' : '🙈' }}
-          </span>
+        <label for="password">Password</label>
+        <div class="password-wrapper" [class.input-error]="wrongPassword">
+          <input #pwd id="password" [type]="showPassword ? 'text' : 'password'"
+                 [(ngModel)]="password" (ngModelChange)="onInput()" name="password"
+                 autocomplete="current-password" required>
+          <button type="button" class="toggle-password"
+                  (click)="togglePassword()"
+                  [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+            <!-- eye (shown while password is hidden) -->
+            <svg *ngIf="!showPassword" viewBox="0 0 24 24" width="20" height="20" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <!-- eye with slash (shown while password is visible) -->
+            <svg *ngIf="showPassword" viewBox="0 0 24 24" width="20" height="20" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
         </div>
+
+        <ul class="password-rules" *ngIf="password.length > 0">
+          <li [class.met]="hasLength">At least 8 characters</li>
+          <li [class.met]="hasCapital">1 capital letter</li>
+          <li [class.met]="hasSymbol">1 symbol (e.g. ! &#64; # $ %)</li>
+        </ul>
       </div>
 
-      <button type="submit">Login</button>
+      <div class="forgot-row">
+        <button type="button" class="link-btn" (click)="openReset()">Forgot password?</button>
+      </div>
+
+      <button type="submit" class="submit-btn" [disabled]="busy">
+        {{ busy ? 'Logging in…' : 'Login' }}
+      </button>
     </form>
+
+    <!-- FORGOT PASSWORD -->
+    <form *ngIf="mode === 'reset'" (ngSubmit)="sendReset()">
+      <p class="reset-text">Enter your email and we’ll send you a link to reset your password.</p>
+
+      <div class="form-group">
+        <label for="resetEmail">Email</label>
+        <input id="resetEmail" type="email" [(ngModel)]="email" name="resetEmail"
+               autocomplete="username" required>
+      </div>
+
+      <button type="submit" class="submit-btn" [disabled]="busy">
+        {{ busy ? 'Sending…' : 'Send reset link' }}
+      </button>
+
+      <div class="forgot-row">
+        <button type="button" class="link-btn" (click)="backToLogin()">← Back to login</button>
+      </div>
+    </form>
+
   </div>
 </div>

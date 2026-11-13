@@ -5,12 +5,15 @@ import { AuthService } from '../../services/auth.services';
 import { FirebaseService } from '../../services/firebase';
 import { DueDateService } from '../../services/due-date/due-date';
 import { SidebarComponent } from '../sidebar/sidebar';
-import { Subscription } from 'rxjs';
+import { EMPTY, Subscription } from 'rxjs';
+import { IconComponent } from '../../shared/icon/icon';
+import { switchMap, map } from 'rxjs/operators';
+import { auth as fbAuth } from '../../../firebase';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, SidebarComponent],
+  imports: [CommonModule, RouterModule, SidebarComponent, IconComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
@@ -31,35 +34,42 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.sub = this.auth.currentUser$.subscribe(user => {
-      if (!user) return;
+  this.sub = this.auth.currentUser$
+    .pipe(
+      switchMap(user => {
+        // tear down the previous user's notification listener
+        this.unsubscribeNotifs?.();
+        this.unsubscribeNotifs = undefined;
 
-      this.auth.currentRole$.subscribe(async role => {
-        this.isAdmin = role === 'admin';
-        this.loadingRole = false;
-        this.cdr.detectChanges();
+        if (!user) return EMPTY;   // signed out: stop everything
 
-        // Run due date checks on login
-        const companyId = this.auth.currentCompanyId$.value;
-        if (companyId) {
-          await this.dueDateService.checkDueDates(
-            companyId,
-            user.uid,
-            this.isAdmin
-          );
-        }
-      });
+        this.unsubscribeNotifs = this.firebase.listenToNotifications(
+          user.uid,
+          notifications => {
+            this.unreadCount = notifications.filter(n => !n.read).length;
+            this.cdr.detectChanges();
+          }
+        );
 
-      // Real time notification badge
-      this.unsubscribeNotifs = this.firebase.listenToNotifications(
-        user.uid,
-        notifications => {
-          this.unreadCount = notifications.filter(n => !n.read).length;
-          this.cdr.detectChanges();
-        }
-      );
+        // switchMap cancels this inner stream automatically when the user changes
+        return this.auth.currentRole$.pipe(map(role => ({ user, role })));
+      })
+    )
+    .subscribe(async ({ user, role }) => {
+      this.isAdmin = role === 'admin';
+      this.loadingRole = false;
+      this.cdr.detectChanges();
+
+      const companyId = this.auth.currentCompanyId$.value;
+      if (!companyId || !fbAuth.currentUser) return;   // never query while signed out
+
+      try {
+        await this.dueDateService.checkDueDates(companyId, user.uid, this.isAdmin);
+      } catch (e) {
+        console.warn('Due date check failed:', e);
+      }
     });
-  }
+}
 
   navigate(path: string) { this.router.navigate([path]); }
   goToSettings() { this.router.navigate(['/settings']); }

@@ -8,6 +8,7 @@
         Week of {{ weekStart | date:'MMM d' }} — {{ weekEnd | date:'MMM d, y' }}
       </div>
     </div>
+    <button class="btn-export" type="button" (click)="exportPdf()" [disabled]="loading">Export PDF</button>
   </div>
 
   <div class="loading-text" *ngIf="loading">Loading performance data...</div>

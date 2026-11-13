@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -11,6 +11,8 @@ import {
 } from 'chart.js';
 import { FirebaseService, Task, User } from '../../services/firebase';
 import { AuthService } from '../../services/auth.services';
+import { PdfExportService } from '../../services/pdf-export';
+import { toDay } from '../../core/date.util';
 
 Chart.register(
   BarController, BarElement, CategoryScale, LinearScale,
@@ -34,7 +36,7 @@ export class AdminPerformanceComponent implements OnInit, OnDestroy {
 
   weekStart = '';
   weekEnd = '';
-  today = new Date().toISOString().slice(0, 10);
+  today = toDay(new Date());
 
   totalAssigned = 0;
   totalApproved = 0;
@@ -72,7 +74,9 @@ export class AdminPerformanceComponent implements OnInit, OnDestroy {
     private auth: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    public datePipe: DatePipe
+    public datePipe: DatePipe,
+    private host: ElementRef<HTMLElement>,
+    private pdf: PdfExportService
   ) {}
 
   ngOnInit() {
@@ -99,8 +103,8 @@ export class AdminPerformanceComponent implements OnInit, OnDestroy {
     start.setDate(now.getDate() - now.getDay());
     const end = new Date(start);
     end.setDate(start.getDate() + 6);
-    this.weekStart = start.toISOString().slice(0, 10);
-    this.weekEnd = end.toISOString().slice(0, 10);
+    this.weekStart = toDay(start);
+    this.weekEnd = toDay(end);
   }
 
   async loadData() {
@@ -191,6 +195,31 @@ export class AdminPerformanceComponent implements OnInit, OnDestroy {
   get manualApprovalRate(): number {
     if (this.totalApproved === 0) return 0;
     return Math.round(((this.totalApproved - this.autoApprovedCount) / this.totalApproved) * 100);
+  }
+
+  // Downloads this page (stats and charts) as a PDF
+  exportPdf() {
+    if (this.loading) return;
+
+    this.pdf.exportDashboard({
+      filename: 'admin-performance',
+      title: 'Admin Performance',
+      subtitle: `${this.admin?.name ?? ''}   |   Week of ${this.weekStart} to ${this.weekEnd}`,
+      stats: [
+        { label: 'Assigned', value: this.totalAssigned },
+        { label: 'Approved', value: this.totalApproved },
+        { label: 'Rejections issued', value: this.totalRejected },
+        { label: 'Auto-approved', value: this.autoApprovedCount },
+        { label: 'Overdue', value: this.overdueCount },
+        { label: 'Avg quality given', value: `${this.avgQualityGiven}/5` },
+        { label: 'Avg speed given', value: `${this.avgSpeedGiven}/5` },
+        { label: 'Manual approval rate', value: `${this.manualApprovalRate}%` }
+      ],
+      // The canvases appear on the page in this order (the third only exists when there are ratings)
+      charts: this.pdf.chartsFrom(this.host.nativeElement, [
+        'Task Overview This Week', 'Approval Breakdown', 'Ratings Given Per Task'
+      ])
+    });
   }
 
   goBack() { this.router.navigate(['/dashboard']); }

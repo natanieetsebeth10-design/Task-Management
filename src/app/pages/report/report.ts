@@ -5,6 +5,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
 import { FirebaseService, Task, User } from '../../services/firebase';
 import { AuthService } from '../../services/auth.services';
+import { PdfExportService } from '../../services/pdf-export';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import {
@@ -93,7 +94,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
     private firebase: FirebaseService,
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private pdf: PdfExportService
   ) {}
 
   ngOnInit() {
@@ -117,26 +119,43 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.buildReports();
   }
 
+  // Turns a string / ISO string / Firestore Timestamp / Date into "YYYY-MM-DD" (local time)
+  private toDay(val: any): string {
+    if (!val) return '';
+    let d: Date;
+    if (typeof val === 'string') {
+      if (val.length <= 10) return val;          // already "YYYY-MM-DD"
+      d = new Date(val);
+    } else if (typeof val.toDate === 'function') {
+      d = val.toDate();
+    } else if (val instanceof Date) {
+      d = val;
+    } else {
+      return '';
+    }
+    if (isNaN(d.getTime())) return '';
+    const p = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+  }
+
   buildReports() {
-    const dateFrom = this.filterDateFrom ? new Date(this.filterDateFrom) : null;
-    const dateTo = this.filterDateTo ? new Date(this.filterDateTo) : null;
-    if (dateTo) dateTo.setHours(23, 59, 59);
+    const from = this.filterDateFrom;   // "YYYY-MM-DD" or ''
+    const to = this.filterDateTo;
 
     this.reports = this.users
       .filter(u => u.role !== 'admin')
       .map(user => {
         let tasks = this.allTasks.filter(
-          t => t.assigneeId === user.id && t.status === 'completed'
+          t => (t.assigneeId === user.id || !!t.assigneeIds?.includes(user.id!)) && t.status === 'completed'
         );
 
-        // Apply date filter
-        if (dateFrom || dateTo) {
+        // Apply date filter (inclusive on both ends)
+        if (from || to) {
           tasks = tasks.filter(t => {
-            const raw = t.completedDate ?? t.startDate ?? '';
-            if (!raw) return false;
-            const d = new Date(raw);
-            if (dateFrom && d < dateFrom) return false;
-            if (dateTo && d > dateTo) return false;
+            const day = this.toDay(t.completedDate) || this.toDay(t.startDate);
+            if (!day) return false;
+            if (from && day < from) return false;
+            if (to && day > to) return false;
             return true;
           });
         }
@@ -147,7 +166,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
           ? Math.min(Math.round((totalHours / benchmark) * 100), 100)
           : 0;
 
-       const ratedTasks = tasks.filter(t => t.rating && !t.autoApproved);
+        const ratedTasks = tasks.filter(t => t.rating && !t.autoApproved);
         const avgQuality = ratedTasks.length
           ? +(ratedTasks.reduce((s, t) => s + (t.rating?.quality ?? 0), 0) / ratedTasks.length).toFixed(1)
           : 0;
@@ -158,7 +177,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         const comments = tasks
           .filter(t => t.rating?.comment)
           .map(t => ({
-            date: t.completedDate ?? t.startDate ?? '',
+            date: this.toDay(t.completedDate) || this.toDay(t.startDate),
             comment: t.rating!.comment!,
             taskDetails: t.details
           }))
@@ -190,9 +209,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   buildUserChart(report: UserReport) {
-    const labels = report.tasks.map(t =>
-      t.completedDate ? t.completedDate.slice(0, 10) : t.details.slice(0, 10)
-    );
+    const labels = report.tasks.map(t => {
+      const day = this.toDay(t.completedDate);
+      return day || t.details.slice(0, 10);
+    });
     this.ratingChartData = {
       labels,
       datasets: [
@@ -225,7 +245,42 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     this.selectedUserId = null;
   }
+
+  // Exports the whole filtered leaderboard (not just the page you are looking at)
+  exportPdf() {
+    const rows = this.filteredReports.map((r, i) => [
+      i + 1,
+      r.user.name,
+      r.user.email,
+      r.tasks.length,
+      `${r.totalHours}h`,
+      `${r.utilization}%`,
+      `${r.avgQuality}/5`,
+      `${r.avgSpeed}/5`,
+      r.user.benchmark ?? this.weeklyBenchmark,
+      r.user.autoAcceptCount ?? 0
+    ]);
+
+    const employee = this.filterUserId === 'all'
+      ? 'All employees'
+      : (this.users.find(u => u.id === this.filterUserId)?.name ?? '');
+
+    this.pdf.exportTable({
+      filename: 'performance-report',
+      title: 'Performance Report',
+      subtitle: `${rows.length} employee${rows.length === 1 ? '' : 's'}, ranked by utilization`,
+      filters: [
+        `Employee: ${employee}`,
+        `Completed from: ${this.filterDateFrom || 'any date'}   to: ${this.filterDateTo || 'any date'}`,
+        `Global benchmark: ${this.weeklyBenchmark} hrs/wk`
+      ],
+      head: ['Rank', 'Employee', 'Email', 'Completed', 'Total hrs', 'Utilization', 'Avg quality', 'Avg speed', 'Benchmark', 'Auto-accepts'],
+      rows,
+      landscape: true
+    });
+  }
+
   goBack() {
-  this.router.navigate(['/dashboard']);
-}
+    this.router.navigate(['/dashboard']);
+  }
 }

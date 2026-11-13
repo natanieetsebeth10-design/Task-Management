@@ -16,6 +16,7 @@
         <button (click)="currentWeek()">Current Week</button>
         <button (click)="nextWeek()">Next Week</button>
       </div>
+      <div class="calendar-table-wrapper">
 
       <table class="calendar-table">
         <thead>
@@ -31,14 +32,19 @@
             <td>Rejected</td>
             <td *ngFor="let day of weekDays">
               <ng-container *ngFor="let task of rejectedTasksByDay[datePipe.transform(day,'yyyy-MM-dd')!] || []">
-                <div class="task-card">
+                <div class="task-card" (click)="openDetails(task, $event)">
                   <div class="task-title">{{ task.details }}</div>
-                  <div>Assignee: {{ task.assigneeName }}</div>
+                  <div>Assignee: {{ nameOf(task) }}</div>
                   <div>Urgency: {{ task.urgency }}</div>
+                  <div *ngIf="task.taskLink">
+                    <a [href]="task.taskLink" target="_blank" rel="noopener noreferrer">Open brief</a>
+                  </div>
                   <div class="task-actions">
                     <button (click)="reassignTask(task)">Reassign</button>
+                    <button type="button" (click)="openChat(task)">Chat</button>
                   </div>
                 </div>
+                <div *ngIf="task.declineReason">Declined: {{ task.declineReason }}</div>
               </ng-container>
             </td>
           </tr>
@@ -48,13 +54,20 @@
             <td>Submitted</td>
             <td *ngFor="let day of weekDays">
               <ng-container *ngFor="let task of submittedTasksByDay[datePipe.transform(day,'yyyy-MM-dd')!] || []">
-                <div class="task-card">
+                <div class="task-card" (click)="openDetails(task, $event)">
                   <div class="task-title">{{ task.details }}</div>
-                  <div>Assignee: {{ task.assigneeName }}</div>
+                  <div>Assignee: {{ nameOf(task) }}</div>
                   <div>Urgency: {{ task.urgency }}</div>
+                  <div *ngIf="task.submissionLink">
+                    <a [href]="task.submissionLink" target="_blank" rel="noopener noreferrer">Open submitted work</a>
+                  </div>
+                  <div *ngIf="task.taskLink">
+                    <a [href]="task.taskLink" target="_blank" rel="noopener noreferrer">Open brief</a>
+                  </div>
                   <div class="task-actions">
                     <button (click)="approveTask(task)">Approve</button>
                     <button (click)="rejectTask(task)">Reject</button>
+                    <button type="button" (click)="openChat(task)">Chat</button>
                   </div>
                 </div>
               </ng-container>
@@ -66,11 +79,20 @@
             <td>Completed</td>
             <td *ngFor="let day of weekDays">
               <ng-container *ngFor="let task of completedTasksByDay[datePipe.transform(day,'yyyy-MM-dd')!] || []">
-                <div class="task-card">
+                <div class="task-card" (click)="openDetails(task, $event)">
                   <div class="task-title">{{ task.details }}</div>
-                  <div>Assignee: {{ task.assigneeName }}</div>
+                  <div>Assignee: {{ nameOf(task) }}</div>
                   <div>Urgency: {{ task.urgency }}</div>
                   <div>Status: Completed</div>
+                  <div *ngIf="task.submissionLink">
+                    <a [href]="task.submissionLink" target="_blank" rel="noopener noreferrer">Open submitted work</a>
+                  </div>
+                  <div *ngIf="task.taskLink">
+                    <a [href]="task.taskLink" target="_blank" rel="noopener noreferrer">Open brief</a>
+                  </div>
+                  <div class="task-actions">
+                    <button type="button" (click)="openChat(task)">Chat</button>
+                  </div>
                 </div>
               </ng-container>
             </td>
@@ -78,6 +100,7 @@
 
         </tbody>
       </table>
+      </div>
     </div>
 
     <!-- RIGHT: overdue panel -->
@@ -95,10 +118,10 @@
       </div>
 
       <div class="overdue-empty" *ngIf="overdueTasks.length === 0">
-        ✅ No overdue tasks!
+        No overdue tasks!
       </div>
 
-      <div class="overdue-task-card" *ngFor="let task of overdueTasks">
+      <div class="overdue-task-card" *ngFor="let task of overdueTasks" (click)="openDetails(task, $event)">
         <div class="overdue-task-top">
           <div class="overdue-task-title">{{ task.details }}</div>
           <div class="overdue-days-badge">{{ getDaysOverdue(task) }}d overdue</div>
@@ -107,10 +130,16 @@
           <span class="urgency-dot urgency-{{ task.urgency }}"></span>
           {{ task.urgency | titlecase }}
           <span class="overdue-sep">·</span>
-          {{ task.assigneeName ?? 'Unassigned' }}
+          {{ nameOf(task) }}
         </div>
         <div class="overdue-task-due">Due: {{ task.dueDate }}</div>
         <div class="overdue-task-status">Status: {{ task.status | titlecase }}</div>
+        <div *ngIf="task.submissionLink">
+          <a [href]="task.submissionLink" target="_blank" rel="noopener noreferrer">Open submitted work</a>
+        </div>
+        <div *ngIf="task.taskLink">
+          <a [href]="task.taskLink" target="_blank" rel="noopener noreferrer">Open brief</a>
+        </div>
         <div class="overdue-task-actions">
           <button class="overdue-btn reassign" (click)="reassignTask(task)">Reassign</button>
           <button
@@ -118,6 +147,7 @@
             *ngIf="task.status === 'submitted'"
             (click)="approveTask(task)"
           >Approve</button>
+          <button class="overdue-btn reassign" type="button" (click)="openChat(task)">Chat</button>
         </div>
       </div>
 

@@ -1,0 +1,217 @@
+:host {
+  --purple-dark: #4f56b5;
+  --purple: #6b74d6;
+  --purple-mid: #8f98e6;
+  --purple-light: #aab4f0;
+  --purple-soft: #eef0ff;
+  --purple-bg: #f5f6ff;
+  --border: #dfe2f5;
+  --text: #3b3f73;
+  --muted: #7b80a8;
+
+  display: block;
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 20px 32px 28px;
+  background: var(--purple-bg);
+  font-family: inherit;
+  color: var(--text);
+}
+
+/* ---------- page header ---------- */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--purple-mid);
+}
+
+.back-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--purple-dark);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.back-btn:hover {
+  background: var(--purple-soft);
+  border-color: var(--purple-mid);
+}
+
+/* ---------- layout card ---------- */
+.chats-layout {
+  display: flex;
+  height: calc(100vh - 130px);
+  min-height: 420px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(107, 116, 214, 0.12);
+  overflow: hidden;
+}
+
+/* ---------- left: task list ---------- */
+.chat-list {
+  width: 320px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  background: #fbfbff;
+  overflow-y: auto;
+}
+
+.list-title {
+  padding: 18px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--purple-mid);
+  border-bottom: 1px solid var(--border);
+}
+
+.chat-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 14px 20px;
+  border: 0;
+  border-bottom: 1px solid #eef0fa;
+  border-left: 4px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text);
+  transition: background 0.15s;
+}
+
+.chat-item:hover { background: var(--purple-soft); }
+
+.chat-item.active {
+  background: var(--purple-soft);
+  border-left-color: var(--purple-mid);
+}
+
+.item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.item-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--purple-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-sub {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* status pills */
+.status-pill {
+  flex-shrink: 0;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: #e6e8f7;
+  color: var(--purple-dark);
+}
+.status-received  { background: #fff3d6; color: #9a6b00; }
+.status-approved  { background: #e0e6ff; color: #3f4bb8; }
+.status-submitted { background: #ece0ff; color: #6a3fb8; }
+.status-completed { background: #dcf5e4; color: #2a7a46; }
+.status-rejected  { background: #fde2e2; color: #b13a3a; }
+
+.list-empty {
+  padding: 24px 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ---------- right: chat ---------- */
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.chat-main-header {
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #f1f2ff, #e6e9ff);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--purple-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pick-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.pick-icon { font-size: 40px; opacity: 0.6; }
+
+/* custom elements are inline by default: make the panel fill the space */
+app-chat-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- phones ---------- */
+@media (max-width: 700px) {
+  :host { padding: 14px 12px 20px; }
+  .page-header h2 { font-size: 22px; }
+  .chats-layout { flex-direction: column; height: calc(100vh - 110px); }
+  .chat-list {
+    width: 100%;
+    max-height: 34%;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+}

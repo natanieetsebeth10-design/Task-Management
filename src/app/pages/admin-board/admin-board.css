@@ -1,30 +1,44 @@
-.tasks-calendar, .admin-calendar {
+
+.admin-calendar,
+.admin-calendar * {
+  box-sizing: border-box;
+}
+
+.admin-calendar {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+  padding: clamp(12px, 2vw, 24px);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 20px;
   background-color: #e6ebfa;
   border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  color: #3c4ba8;
 }
 
-h3 {
-  color: #8fa3e6;
-  margin-bottom: 15px;
-  font-weight: 600;
-}
+/* =========================================
+   PAGE HEADER
+   ========================================= */
 
-/* ── Page header ── */
-.page-header {
+.admin-calendar .page-header {
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-wrap: wrap;
   margin-bottom: 24px;
 }
 
-.page-header h2,
-.page-header h3 { margin: 0; }
+.admin-calendar .page-header h3 {
+  margin: 0;
+  color: #8fa3e6;
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-weight: 600;
+}
 
-.back-btn {
+.admin-calendar .back-btn {
+  flex-shrink: 0;
   background: #f0f4ff;
   color: #4b5bbf;
   border: 1px solid #c8d0f8;
@@ -33,295 +47,456 @@ h3 {
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
   white-space: nowrap;
+  transition: background 0.2s ease, transform 0.15s ease;
 }
 
-.back-btn:hover {
+.admin-calendar .back-btn:hover {
   background: #c8d0f8;
   transform: translateX(-2px);
 }
 
-/* ── Layout ── */
-.calendar-layout {
-  display: flex;
+/* =========================================
+   MAIN LAYOUT
+   ========================================= */
+
+.admin-calendar .calendar-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 270px;
   gap: 20px;
-  align-items: flex-start;
-}
-
-.calendar-main { flex: 1; min-width: 0; }
-
-/* ── Week controls ── */
-.week-controls {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.week-controls button {
-  background-color: #a5b5f0;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 14px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
-}
-
-.week-controls button:hover { background-color: #8fa3e6; }
-
-/* ── Calendar table ── */
-.calendar-table {
+  align-items: start;
   width: 100%;
-  border-collapse: collapse;
+  min-width: 0;
 }
 
-.calendar-table th,
-.calendar-table td {
-  border: 1px solid #c8d0f8;
-  padding: 10px;
-  vertical-align: top;
+.admin-calendar .calendar-main {
+  width: 100%;
+  min-width: 0;
 }
 
-.calendar-table th {
-  background-color: #c8d0f8;
-  color: #4b5bbf;
-  text-align: center;
-  font-weight: 600;
-}
+/* =========================================
+   WEEK CONTROLS
+   ========================================= */
 
-.calendar-table td {
-  background-color: #e3e8fa;
-  min-width: 150px;
-}
-
-/* ── Task cards ── */
-.task-card {
-  background-color: #f0f4ff;
-  border-left: 4px solid #8fa3e6;
-  border-radius: 8px;
-  padding: 8px;
-  margin-bottom: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.task-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(143,163,230,0.2);
-}
-
-.task-card .task-title {
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: #4b5bbf;
-}
-
-.task-card div {
-  font-size: 0.9rem;
-  color: #3c4ba8;
-}
-
-.task-card button {
-  background-color: #a5b5f0;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 4px 10px;
-  margin-top: 4px;
-  margin-right: 4px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: background-color 0.2s ease, box-shadow 0.15s ease;
-}
-
-.task-card button:hover {
-  background-color: #8fa3e6;
-  box-shadow: 0 2px 6px rgba(143,163,230,0.3);
-}
-
-/* ── Overdue panel ── */
-.overdue-panel {
-  width: 240px;
-  flex-shrink: 0;
-  background-color: #f0f4ff;
-  border-left: 4px solid #dc2626;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(220,38,38,0.1);
-  position: sticky;
-  top: 20px;
-}
-
-.overdue-panel-header {
+.admin-calendar .week-controls {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.admin-calendar .week-controls button {
+  background: #a5b5f0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 15px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+}
+
+.admin-calendar .week-controls button:hover {
+  background: #8fa3e6;
+}
+
+/* =========================================
+   CALENDAR TABLE
+   ========================================= */
+
+.admin-calendar .calendar-table-wrapper {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: 8px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #a5b5f0 #e6ebfa;
+}
+
+.admin-calendar .calendar-table {
+  width: 100%;
+  min-width: 1000px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Status column */
+.admin-calendar .calendar-table th:first-child,
+.admin-calendar .calendar-table td:first-child {
+  width: 115px;
+  min-width: 115px;
+}
+
+/* Seven day columns */
+.admin-calendar .calendar-table th:not(:first-child),
+.admin-calendar .calendar-table td:not(:first-child) {
+  width: 126px;
+}
+
+.admin-calendar .calendar-table th,
+.admin-calendar .calendar-table td {
+  border: 1px solid #c8d0f8;
+  padding: 9px;
+  vertical-align: top;
+}
+
+.admin-calendar .calendar-table th {
+  background: #c8d0f8;
+  color: #4b5bbf;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+  height: 48px;
+}
+
+.admin-calendar .calendar-table td {
+  background: #e3e8fa;
+  min-height: 110px;
+  height: auto;
+  font-size: 0.85rem;
+  color: #3c4ba8;
+  overflow-wrap: break-word;
+}
+
+/* Keep status names readable */
+.admin-calendar .calendar-table td:first-child {
+  font-weight: 600;
+  color: #4b5bbf;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+/* =========================================
+   TASK CARDS
+   ========================================= */
+
+.admin-calendar .task-card {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #f0f4ff;
+  border-left: 4px solid #8fa3e6;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  overflow-wrap: break-word;
+  word-break: normal;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-calendar .task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(143, 163, 230, 0.2);
+}
+
+.admin-calendar .task-card .task-title {
+  display: block;
+  margin-bottom: 7px;
+  color: #4b5bbf;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.admin-calendar .task-card > div {
+  margin-bottom: 5px;
+  color: #3c4ba8;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.admin-calendar .task-card a,
+.admin-calendar .overdue-task-card a {
+  color: #4b5bbf;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
+.admin-calendar .task-card a:hover,
+.admin-calendar .overdue-task-card a:hover {
+  color: #26358f;
+}
+
+/* =========================================
+   TASK ACTION BUTTONS
+   ========================================= */
+
+.admin-calendar .task-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.admin-calendar .task-actions button {
+  flex: 0 1 auto;
+  min-width: max-content;
+  max-width: 100%;
+  padding: 7px 10px;
+  margin: 0;
+  background: #a5b5f0;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.admin-calendar .task-actions button:hover {
+  background: #8fa3e6;
+}
+
+/* =========================================
+   OVERDUE PANEL
+   ========================================= */
+
+.admin-calendar .overdue-panel {
+  position: sticky;
+  top: 20px;
+  width: 100%;
+  min-width: 0;
+  padding: 16px;
+  background: #f0f4ff;
+  border-left: 4px solid #dc2626;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
+  overflow: hidden;
+}
+
+.admin-calendar .overdue-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 1px solid #fecaca;
 }
 
-.overdue-panel-icon { font-size: 1.4rem; }
+.admin-calendar .overdue-panel-icon {
+  flex-shrink: 0;
+  font-size: 1.4rem;
+}
 
-.overdue-panel-title {
-  font-weight: 700;
+.admin-calendar .overdue-panel-title {
   color: #dc2626;
   font-size: 0.95rem;
+  font-weight: 700;
 }
 
-.overdue-panel-date {
-  font-size: 0.75rem;
+.admin-calendar .overdue-panel-date {
+  margin-top: 3px;
   color: #8fa3e6;
+  font-size: 0.75rem;
+  white-space: nowrap;
 }
 
-.overdue-count {
+.admin-calendar .overdue-count {
+  flex-shrink: 0;
   margin-left: auto;
+  padding: 3px 9px;
   background: #dc2626;
   color: #fff;
   border-radius: 20px;
-  padding: 2px 10px;
   font-size: 0.8rem;
   font-weight: 700;
-  flex-shrink: 0;
 }
 
-.overdue-empty {
-  text-align: center;
+.admin-calendar .overdue-empty {
+  padding: 20px 5px;
   color: #16a34a;
+  text-align: center;
   font-size: 0.88rem;
-  padding: 20px 0;
   font-weight: 600;
+  overflow-wrap: break-word;
 }
 
-.overdue-task-card {
+/* =========================================
+   OVERDUE TASK CARDS
+   ========================================= */
+
+.admin-calendar .overdue-task-card {
+  min-width: 0;
+  padding: 12px;
+  margin-bottom: 10px;
   background: #fff;
   border-left: 3px solid #dc2626;
   border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 6px rgba(220,38,38,0.08);
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.08);
+  overflow-wrap: anywhere;
+  cursor: pointer;
   transition: transform 0.15s ease;
 }
 
-.overdue-task-card:hover { transform: translateY(-1px); }
+.admin-calendar .overdue-task-card:hover {
+  transform: translateY(-1px);
+}
 
-.overdue-task-top {
+.admin-calendar .overdue-task-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 8px;
+  margin-bottom: 7px;
+}
+
+.admin-calendar .overdue-task-title {
+  flex: 1;
+  min-width: 0;
+  color: #3c4ba8;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.admin-calendar .overdue-days-badge {
+  flex-shrink: 0;
+  padding: 3px 7px;
+  background: #fef2f2;
+  color: #dc2626;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.admin-calendar .overdue-task-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 7px;
+  color: #8fa3e6;
+  font-size: 0.78rem;
+}
+
+.admin-calendar .overdue-sep {
+  color: #c8d0f8;
+}
+
+.admin-calendar .overdue-task-due,
+.admin-calendar .overdue-task-status {
+  margin-bottom: 5px;
+  font-size: 0.78rem;
+}
+
+.admin-calendar .overdue-task-due {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.admin-calendar .overdue-task-status {
+  color: #8fa3e6;
+}
+
+.admin-calendar .overdue-task-card > div {
   margin-bottom: 5px;
 }
 
-.overdue-task-title {
-  font-weight: 600;
-  color: #3c4ba8;
-  font-size: 0.88rem;
-  flex: 1;
-}
+/* =========================================
+   OVERDUE ACTION BUTTONS
+   ========================================= */
 
-.overdue-days-badge {
-  background: #fef2f2;
-  color: #dc2626;
-  font-size: 0.7rem;
-  font-weight: 700;
-  border-radius: 6px;
-  padding: 2px 7px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.overdue-task-meta {
+.admin-calendar .overdue-task-actions {
   display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.78rem;
-  color: #8fa3e6;
-  margin-bottom: 4px;
-}
-
-.overdue-sep { color: #c8d0f8; }
-
-.overdue-task-due {
-  font-size: 0.78rem;
-  color: #dc2626;
-  font-weight: 600;
-  margin-bottom: 3px;
-}
-
-.overdue-task-status {
-  font-size: 0.78rem;
-  color: #8fa3e6;
-  margin-bottom: 8px;
-}
-
-.overdue-task-actions {
-  display: flex;
-  gap: 6px;
   flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
 }
 
-.overdue-btn {
+.admin-calendar .overdue-btn {
+  flex: 0 1 auto;
+  min-width: max-content;
+  padding: 7px 11px;
   border: none;
   border-radius: 7px;
-  padding: 5px 12px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.1s ease;
+  transition: transform 0.1s ease, background 0.2s ease;
 }
 
-.overdue-btn:hover { transform: translateY(-1px); }
+.admin-calendar .overdue-btn:hover {
+  transform: translateY(-1px);
+}
 
-.overdue-btn.reassign {
+.admin-calendar .overdue-btn.reassign {
   background: #fff7ed;
   color: #ea580c;
   border: 1px solid #fed7aa;
 }
 
-.overdue-btn.reassign:hover { background: #ffedd5; }
+.admin-calendar .overdue-btn.reassign:hover {
+  background: #ffedd5;
+}
 
-.overdue-btn.approve {
+.admin-calendar .overdue-btn.approve {
   background: #f0fdf4;
   color: #16a34a;
   border: 1px solid #bbf7d0;
 }
 
-.overdue-btn.approve:hover { background: #dcfce7; }
+.admin-calendar .overdue-btn.approve:hover {
+  background: #dcfce7;
+}
 
-.urgency-dot {
+/* =========================================
+   URGENCY INDICATORS
+   ========================================= */
+
+.admin-calendar .urgency-dot {
+  display: inline-block;
+  flex-shrink: 0;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  flex-shrink: 0;
-  display: inline-block;
 }
 
-.urgency-dot.urgency-low    { background: #388e3c; }
-.urgency-dot.urgency-medium { background: #e65100; }
-.urgency-dot.urgency-high   { background: #c62828; }
-
-/* ── Responsive ── */
-@media screen and (max-width: 900px) {
-  .calendar-layout { flex-direction: column; }
-  .overdue-panel { width: 100%; position: static; }
-
-  .calendar-table th,
-  .calendar-table td {
-    font-size: 0.75rem;
-    padding: 6px;
-    min-width: 100px;
-  }
-
-  .task-card { padding: 6px; }
-  .task-card button { padding: 3px 8px; font-size: 0.75rem; }
+.admin-calendar .urgency-dot.urgency-low {
+  background: #388e3c;
 }
-.loading-users {
+
+.admin-calendar .urgency-dot.urgency-medium {
+  background: #e65100;
+}
+
+.admin-calendar .urgency-dot.urgency-high {
+  background: #c62828;
+}
+
+/* =========================================
+   LOADING USERS
+   ========================================= */
+
+.admin-calendar .loading-users {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
   padding: 12px 14px;
   background: #e6ebfa;
   border-radius: 10px;
@@ -329,16 +504,204 @@ h3 {
   font-size: 0.9rem;
 }
 
-.loading-spinner {
+.admin-calendar .loading-spinner {
+  flex-shrink: 0;
   width: 16px;
   height: 16px;
   border: 2px solid #c8d0f8;
   border-top-color: #8fa3e6;
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  flex-shrink: 0;
+  animation: admin-spin 0.7s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+@keyframes admin-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================
+   TABLETS AND SMALL LAPTOPS
+   Stack overdue panel below calendar
+   ========================================= */
+
+@media (max-width: 1100px) {
+  .admin-calendar .calendar-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .admin-calendar .overdue-panel {
+    position: static;
+    width: 100%;
+  }
+
+  .admin-calendar .calendar-table {
+    min-width: 1000px;
+  }
+}
+
+/* =========================================
+   TABLETS
+   ========================================= */
+
+@media (max-width: 768px) {
+  .admin-calendar {
+    padding: 14px;
+  }
+
+  .admin-calendar .page-header {
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .admin-calendar .week-controls {
+    gap: 7px;
+  }
+
+  .admin-calendar .week-controls button {
+    padding: 8px 11px;
+    font-size: 0.82rem;
+  }
+
+  .admin-calendar .calendar-table th,
+  .admin-calendar .calendar-table td {
+    padding: 8px;
+  }
+
+  .admin-calendar .task-card {
+    padding: 9px;
+  }
+
+  .admin-calendar .task-actions button {
+    padding: 7px 9px;
+  }
+}
+
+/* =========================================
+   MOBILE PHONES
+   ========================================= */
+
+@media (max-width: 480px) {
+  .admin-calendar {
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .admin-calendar .page-header {
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 15px;
+  }
+
+  .admin-calendar .page-header h3 {
+    font-size: 1rem;
+  }
+
+  .admin-calendar .back-btn {
+    padding: 7px 11px;
+    font-size: 0.8rem;
+  }
+
+  .admin-calendar .week-controls {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .admin-calendar .week-controls button {
+    width: 100%;
+    padding: 9px 4px;
+    font-size: 0.73rem;
+  }
+
+  /* Keep the calendar readable and scroll it horizontally */
+  .admin-calendar .calendar-table {
+    min-width: 1000px;
+  }
+
+  .admin-calendar .calendar-table th,
+  .admin-calendar .calendar-table td {
+    padding: 7px;
+  }
+
+  .admin-calendar .task-card {
+    padding: 8px;
+  }
+
+  .admin-calendar .task-card .task-title {
+    font-size: 0.8rem;
+  }
+
+  .admin-calendar .task-card > div {
+    font-size: 0.73rem;
+  }
+
+  .admin-calendar .task-actions {
+    gap: 5px;
+  }
+
+  .admin-calendar .task-actions button {
+    font-size: 0.72rem;
+    padding: 7px 8px;
+  }
+
+  .admin-calendar .overdue-panel {
+    padding: 12px;
+  }
+
+  .admin-calendar .overdue-task-card {
+    padding: 10px;
+  }
+
+  .admin-calendar .overdue-task-actions {
+    gap: 5px;
+  }
+
+  .admin-calendar .overdue-btn {
+    padding: 7px 9px;
+    font-size: 0.74rem;
+  }
+}
+
+/* =========================================
+   VERY SMALL PHONES
+   ========================================= */
+
+@media (max-width: 360px) {
+  .admin-calendar {
+    padding: 8px;
+  }
+
+  .admin-calendar .page-header h3 {
+    font-size: 0.9rem;
+  }
+
+  .admin-calendar .week-controls button {
+    font-size: 0.68rem;
+    padding: 8px 3px;
+  }
+
+  .admin-calendar .overdue-task-top {
+    flex-wrap: wrap;
+  }
+}
+
+/* =========================================
+   ACCESSIBILITY
+   ========================================= */
+
+.admin-calendar button:focus-visible,
+.admin-calendar a:focus-visible {
+  outline: 2px solid #4b5bbf;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-calendar *,
+  .admin-calendar *::before,
+  .admin-calendar *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

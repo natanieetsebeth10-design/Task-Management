@@ -9,8 +9,9 @@ import {
   signOut,
   User as FirebaseUser
 } from 'firebase/auth';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc , collection} from 'firebase/firestore';
 import { BehaviorSubject } from 'rxjs';
 import { db, app } from '../../firebase';
 
@@ -64,26 +65,30 @@ export class AuthService {
     await reauthenticateWithCredential(user, credential);
     await updatePassword(user, newPassword);
   }
+async registerCompany(
+  companyName: string,
+  email: string,
+  password: string,
+  name: string
+) {
+  // 1. Create the login first, so the app is signed in for the writes below
+  const userCred = await this.createUser(email, password);
 
-  async registerCompany(
-    companyName: string,
-    email: string,
-    password: string,
-    name: string
-  ) {
-    const companyRef = doc(this.database, 'companies');
-    await setDoc(companyRef, { companyName, createdAt: new Date() });
+  // 2. Company document with an auto-generated ID
+  const companyRef = doc(collection(this.database, 'companies'));
+  await setDoc(companyRef, { companyName, createdAt: new Date() });
 
-    const userCred = await this.createUser(email, password);
-    await setDoc(doc(this.database, 'users', userCred.user.uid), {
-      name, email, role: 'admin',
-      companyId: companyRef.id,
-      createdAt: new Date()
-    });
+  // 3. Admin's user document, linked to the company
+  await setDoc(doc(this.database, 'users', userCred.user.uid), {
+    name,
+    email,
+    role: 'admin',
+    companyId: companyRef.id,
+    createdAt: new Date()
+  });
 
-    return { companyId: companyRef.id, uid: userCred.user.uid };
-  }
-
+  return { companyId: companyRef.id, uid: userCred.user.uid };
+}
   async addUserToCompany(
     uid: string, name: string, email: string,
     companyId: string, role = 'member'
@@ -92,6 +97,9 @@ export class AuthService {
       name, email, role, companyId, createdAt: new Date()
     });
   }
+  async resetPassword(email: string): Promise<void> {
+  await sendPasswordResetEmail(this.auth, email);
+}
 
   async getUserRole(): Promise<string | null> {
     const user = this.currentUser$.value;
@@ -100,4 +108,5 @@ export class AuthService {
     const data = userDoc.data();
     return data ? data['role'] : null;
   }
+  
 }

@@ -8,11 +8,12 @@
         Week of {{ weekStart | date:'MMM d' }} — {{ weekEnd | date:'MMM d, y' }}
       </div>
     </div>
+    <button class="btn-export" type="button" (click)="exportPdf()" [disabled]="!chartsReady">Export PDF</button>
   </div>
 
   <div class="loading-text" *ngIf="loading">Loading your performance data...</div>
 
-  <ng-container *ngIf="!loading">
+  <div class="perf-content" [class.is-hidden]="!chartsReady">
 
     <div class="stat-cards">
       <div class="stat-card">
@@ -120,5 +121,5 @@
       </table>
     </div>
 
-  </ng-container>
+  </div>
 </div>

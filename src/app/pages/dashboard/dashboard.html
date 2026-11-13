@@ -7,16 +7,16 @@
       </button>
     </div>
     <div class="header-right">
-      <button class="notif-btn" (click)="goToNotifications()">
+      <button class="menu-btn" (click)="goToNotifications()">
         <div class="notif-wrapper">
-          <img src="assets/icons/bell.svg" alt="Notifications">
+          <img src="assets/notications.png" alt="Notifications">
           <span class="notif-badge" *ngIf="unreadCount > 0">
             {{ unreadCount > 99 ? '99+' : unreadCount }}
           </span>
         </div>
       </button>
       <button class="settings-btn" (click)="goToSettings()">
-        <img src="assets/icons/settings.svg" alt="Settings">
+        <img src="assets/settings.png" alt="Settings">
       </button>
     </div>
   </header>
@@ -28,44 +28,43 @@
   <div class="dashboard-container">
 
     <div class="loading-text" *ngIf="loadingRole">Loading permissions...</div>
+<div class="action-buttons" *ngIf="!loadingRole">
 
-    <div class="action-buttons" *ngIf="!loadingRole">
-
-      <div class="action-group">
-        <div class="group-label">General</div>
-        <button class="action-btn" (click)="navigate('/create-task')">
-          <span class="btn-icon"></span> Create Task
-        </button>
+  <div class="action-group">
+    <div class="group-label">General</div>
+    <button class="action-btn" (click)="navigate('/create-task')">
+      <span class="btn-icon"><app-icon name="create-task"></app-icon></span> Create Task
+    </button>
         <button class="action-btn" (click)="navigate('/view-tasks')">
-          <span class="btn-icon"></span> View Tasks
-        </button>
-        <button class="action-btn" (click)="navigate('/my-performance')">
-          <span class="btn-icon"></span> My Performance
-        </button>
-      </div>
-
-      <ng-container *ngIf="isAdmin">
-        <div class="action-group">
-          <div class="group-label">Admin</div>
-          <button class="action-btn" (click)="navigate('/add-user')">
-            <span class="btn-icon"></span> Create User
-          </button>
-          <button class="action-btn" (click)="navigate('/admin-board')">
-            <span class="btn-icon"></span> Admin Board
-          </button>
-          <button class="action-btn" (click)="navigate('/reports')">
-            <span class="btn-icon"></span> Reports
-          </button>
-          <button class="action-btn" (click)="navigate('/task-search')">
-            <span class="btn-icon"></span> Task Search
-          </button>
-          <button class="action-btn" (click)="navigate('/admin-performance')">
-            <span class="btn-icon"></span> My Admin Stats
-          </button>
-        </div>
-      </ng-container>
-
-    </div>
+  <span class="btn-icon"><app-icon name="view-tasks"></app-icon></span> View Tasks
+</button>
+<button class="action-btn" (click)="navigate('/chats')">
+  <span class="btn-icon"><app-icon name="chats"></app-icon></span> Chats
+</button>
+<button class="action-btn" (click)="navigate('/my-performance')">
+  <span class="btn-icon"><app-icon name="my-performance"></app-icon></span> My Performance
+</button>
   </div>
+
+  <ng-container *ngIf="isAdmin">
+    <div class="action-group">
+      <div class="group-label">Admin</div>
+      <button class="action-btn" (click)="navigate('/add-user')">
+        <span class="btn-icon"><app-icon name="create-user"></app-icon></span> Create User
+      </button>
+      <button class="action-btn" (click)="navigate('/admin-board')">
+        <span class="btn-icon"><app-icon name="admin-board"></app-icon></span> Admin Board
+      </button>
+      <button class="action-btn" (click)="navigate('/reports')">
+        <span class="btn-icon"><app-icon name="reports"></app-icon></span> Reports
+      </button>
+      <button class="action-btn" (click)="navigate('/task-search')">
+        <span class="btn-icon"><app-icon name="task-search"></app-icon></span> Task Search
+      </button>
+      <button class="action-btn" (click)="navigate('/admin-performance')">
+        <span class="btn-icon"><app-icon name="admin-stats"></app-icon></span> My Admin Stats
+      </button>
+    </div>
+  </ng-container>
 
 </div>

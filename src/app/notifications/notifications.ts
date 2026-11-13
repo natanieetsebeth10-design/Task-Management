@@ -47,11 +47,19 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     await this.firebase.markAllNotificationsRead(this.userId);
   }
 
-  async markRead(notification: AppNotification) {
-    if (!notification.read) {
-      await this.firebase.markNotificationRead(notification.id!);
-    }
+  async open(n: AppNotification) {
+  if (!n.read) {
+    await this.firebase.markNotificationRead(n.id!);
   }
+  if (this.isChat(n)) {
+    this.router.navigate(['/chats'], { queryParams: { task: n.taskId } });
+  }
+}
+
+isChat(n: AppNotification): boolean {
+  // the title check covers chat notifications created before the 'chat' type existed
+  return !!n.taskId && (n.type === 'chat' || n.title === 'New chat message');
+}
 
   get unreadCount() {
     return this.notifications.filter(n => !n.read).length;

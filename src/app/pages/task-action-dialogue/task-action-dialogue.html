@@ -6,6 +6,88 @@
 
   <form [formGroup]="form">
 
+    <!-- LINKS (approve and reject only) -->
+    <div class="link-box" *ngIf="data.action !== 'reassign'">
+      <div *ngIf="data.taskLink">
+        Brief:
+        <a [href]="data.taskLink" target="_blank" rel="noopener noreferrer">Open</a>
+      </div>
+
+      <div *ngIf="data.submissionLink; else noLink">
+        Submitted work:
+        <a [href]="data.submissionLink" target="_blank" rel="noopener noreferrer">Open</a>
+      </div>
+      <ng-template #noLink><em>No link attached</em></ng-template>
+
+      <p class="member-note" *ngIf="data.submissionNote">
+        <strong>{{ data.assigneeName }}'s note:</strong> {{ data.submissionNote }}
+      </p>
+    </div>
+
+    <!-- AI REVIEW (approve and reject only) -->
+    <div class="ai-box" *ngIf="data.action !== 'reassign'">
+      <div class="ai-head">
+        <span class="ai-title">AI review</span>
+        <span class="ai-tag">Suggestion only</span>
+      </div>
+
+      <!-- timing is plain code, so it shows without an API key -->
+      <div class="ai-timing" *ngIf="timing">
+        {{ timing.text }}
+        <strong>Suggested speed: {{ timing.speedScore }}/5</strong>
+      </div>
+
+      <ng-container *ngIf="!review">
+        <div class="ai-key" *ngIf="needKey">
+          <p>Paste your free Gemini API key to turn on AI review. It stays in this browser only.</p>
+          <input
+            type="password"
+            class="field-input"
+            placeholder="AIza…"
+            autocomplete="off"
+            [value]="keyInput"
+            (input)="keyInput = $any($event.target).value"
+          >
+          <button type="button" class="ai-btn" (click)="saveKeyAndRun()" [disabled]="!keyInput.trim() || aiLoading">
+            Save key and review
+          </button>
+        </div>
+
+        <button type="button" class="ai-btn" *ngIf="!needKey" (click)="runReview()" [disabled]="aiLoading">
+          {{ aiLoading ? 'Reviewing…' : 'Get AI review' }}
+        </button>
+      </ng-container>
+
+      <div class="ai-error" *ngIf="aiError">{{ aiError }}</div>
+
+      <div class="ai-result" *ngIf="review">
+        <p class="ai-summary">{{ review.summary }}</p>
+
+        <div class="ai-scores">
+          <span class="ai-chip">Quality {{ review.qualityScore }}/5</span>
+          <span class="ai-chip" *ngIf="timing">Speed {{ timing.speedScore }}/5</span>
+        </div>
+
+        <div class="ai-list" *ngIf="review.strengths.length">
+          <strong>Looks good</strong>
+          <ul><li *ngFor="let s of review.strengths">{{ s }}</li></ul>
+        </div>
+        <div class="ai-list" *ngIf="review.concerns.length">
+          <strong>Concerns</strong>
+          <ul><li *ngFor="let c of review.concerns">{{ c }}</li></ul>
+        </div>
+
+        <div class="ai-actions">
+          <button type="button" class="ai-btn" (click)="applySuggestion()">Apply suggestion</button>
+          <button type="button" class="ai-link" (click)="runReview()" [disabled]="aiLoading">Run again</button>
+        </div>
+      </div>
+
+      <div class="ai-note">
+        The AI cannot open the linked file. It judges from the task description, the member’s note and the timing. You make the final call.
+      </div>
+    </div>
+
     <!-- APPROVE -->
     <div *ngIf="data.action === 'approve'">
 
@@ -88,6 +170,22 @@
           No other employees available.
         </div>
 
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">New Due Date</label>
+        <input
+          class="field-input"
+          type="date"
+          formControlName="newDueDate"
+          [min]="minDate"
+        >
+        <div
+          *ngIf="form.get('newDueDate')?.errors?.['past']"
+          style="color:#c62828; font-size:0.82rem; margin-top:4px;"
+        >
+          The new due date can't be in the past.
+        </div>
       </div>
     </div>
 

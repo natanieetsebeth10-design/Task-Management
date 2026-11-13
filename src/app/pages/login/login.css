@@ -90,3 +90,141 @@ button:hover {
   font-size: 18px;
   color: #6b7280; /* subtle pastel gray for icon */
 }
+/* LOGIN PAGE EXTRAS
+   Delete the block I gave you earlier and paste this at the bottom of login.css instead.
+   The selectors are deliberately specific so your global "button" styles can't override them. */
+
+/* ---- Back to home ---- */
+.login-container .back-btn {
+  display: inline-block;
+  width: auto;
+  min-width: 0;
+  height: auto;
+  margin: 0 0 12px;
+  padding: 4px 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  color: #4b5bbf;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.login-container .back-btn:hover { background: none; text-decoration: underline; transform: none; }
+
+/* ---- Password field with the eye inside it, on the right ---- */
+.login-container .password-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+.login-container .password-wrapper input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 46px;          /* room for the eye */
+}
+
+.login-container .password-wrapper .toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  left: auto;
+  transform: translateY(-50%);
+  width: 32px;
+  min-width: 0;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  box-shadow: none;
+  color: #8fa3e6;
+  cursor: pointer;
+}
+.login-container .password-wrapper .toggle-password:hover {
+  background: rgba(143, 163, 230, 0.15);
+  color: #4b5bbf;
+  transform: translateY(-50%);   /* keep it centred if your global hover moves buttons */
+}
+.login-container .password-wrapper .toggle-password svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+/* ---- Password rules checklist ---- */
+.login-container .password-rules { list-style: none; margin: 10px 0 0; padding: 0; font-size: 0.82rem; }
+.login-container .password-rules li { color: #c62828; padding-left: 20px; position: relative; margin-bottom: 2px; }
+.login-container .password-rules li::before { content: '✕'; position: absolute; left: 0; }
+.login-container .password-rules li.met { color: #2e7d32; }
+.login-container .password-rules li.met::before { content: '✓'; }
+
+/* ---- Forgot password link (plain text link, not a button) ---- */
+.login-container .forgot-row { margin: 10px 0 14px; text-align: right; }
+.login-container .forgot-row .link-btn {
+  display: inline;
+  width: auto;
+  min-width: 0;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  color: #5a67d8;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.login-container .forgot-row .link-btn:hover { background: none; color: #4b5bbf; transform: none; }
+
+/* ---- Messages ---- */
+.login-container .info-message {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.88rem;
+}
+.login-container .reset-text { color: #3c4ba8; font-size: 0.9rem; margin-bottom: 12px; }
+
+.login-container .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+/* Append to the bottom of login.css (wrong-password styling) */
+
+/* Red outline on the password box after a failed login */
+.login-container .password-wrapper.input-error input {
+  border-color: #e57373;
+  box-shadow: 0 0 0 3px rgba(229, 115, 115, 0.2);
+}
+
+/* "Forgot your password? Reset it" shown after two failed tries */
+.login-container .reset-nudge {
+  margin: 4px 0 12px;
+  font-size: 0.88rem;
+  color: #3c4ba8;
+}
+.login-container .reset-nudge .nudge-btn {
+  display: inline;
+  width: auto;
+  min-width: 0;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  color: #5a67d8;
+  font-size: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.login-container .reset-nudge .nudge-btn:hover { background: none; color: #4b5bbf; transform: none; }

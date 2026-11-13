@@ -12,8 +12,10 @@ import {
   updateDoc,
   onSnapshot,
   orderBy,
-  writeBatch
+  writeBatch,
+  serverTimestamp
 } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 export interface AppNotification {
   id?: string;
@@ -23,8 +25,16 @@ export interface AppNotification {
   read: boolean;
   createdAt: string;
   taskId?: string;
-  type?: 'due_today' | 'overdue' | 'general';
+  type?: 'due_today' | 'overdue' | 'general' | 'chat';
   sentDate?: string;
+}
+
+export interface ChatMessage {
+  id?: string;
+  senderId: string;
+  senderName: string;
+  text: string;
+  createdAt: string;
 }
 
 export interface Task {
@@ -33,8 +43,11 @@ export interface Task {
   details: string;
   urgency: string;
   status: 'received' | 'approved' | 'submitted' | 'completed' | 'rejected';
-  assigneeId?: string;
+  assigneeId?: string;          // the lead (or the only assignee)
   assigneeName?: string;
+  assigneeIds?: string[];       // everyone on the task (group tasks)
+  assigneeNames?: string[];
+  isGroup?: boolean;
   assignerId?: string;
   assigner?: string;
   startDate?: string;
@@ -51,6 +64,10 @@ export interface Task {
   reassigned?: boolean;
   companyId?: string;
   createdAt?: any;
+  taskLink?: string;
+  submissionLink?: string;
+  submissionNote?: string;
+  declineReason?: string;
 }
 
 export interface User {
@@ -106,14 +123,26 @@ export class FirebaseService {
     return snapshot.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
   }
 
+  // Tasks where the user is the lead / sole assignee OR a member of a group task
   async getTasksByAssignee(assigneeId: string, companyId: string): Promise<Task[]> {
-    const q = query(
-      collection(db, 'tasks'),
-      where('assigneeId', '==', assigneeId),
-      where('companyId', '==', companyId)
-    );
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+    const base = collection(db, 'tasks');
+    const [a, b] = await Promise.all([
+      getDocs(query(base, where('assigneeId', '==', assigneeId), where('companyId', '==', companyId))),
+      getDocs(query(base, where('assigneeIds', 'array-contains', assigneeId), where('companyId', '==', companyId)))
+    ]);
+    const map = new Map<string, Task>();
+    [...a.docs, ...b.docs].forEach(d => map.set(d.id, { id: d.id, ...(d.data() as any) }));
+    return [...map.values()];
+  }
+
+  // Reassigning always collapses a task back to a single person
+  async reassignTask(taskId: string, newAssigneeId: string) {
+    await updateDoc(doc(db, 'tasks', taskId), {
+      assigneeId: newAssigneeId,
+      assigneeIds: [newAssigneeId],
+      isGroup: false,
+      status: 'received'
+    });
   }
 
   async getTasksByStatus(
@@ -149,13 +178,6 @@ export class FirebaseService {
     if (status === 'completed') update.completedDate = new Date().toISOString();
     if (status === 'received')  update.rejectedDate  = new Date().toISOString();
     await updateDoc(taskRef, update);
-  }
-
-  async reassignTask(taskId: string, newAssigneeId: string) {
-    await updateDoc(doc(db, 'tasks', taskId), {
-      assigneeId: newAssigneeId,
-      status: 'received'
-    });
   }
 
   async updateTaskDetails(taskId: string, updatedFields: Partial<Task>) {
@@ -234,26 +256,39 @@ export class FirebaseService {
       where('userId', '==', userId),
       orderBy('createdAt', 'desc')
     );
-    return onSnapshot(q, snapshot => {
-      const notifications = snapshot.docs.map(d => ({
-        id: d.id,
-        ...(d.data() as any)
-      }));
-      callback(notifications);
-    });
+    return onSnapshot(
+      q,
+      snapshot => {
+        const notifications = snapshot.docs.map(d => ({
+          id: d.id,
+          ...(d.data() as any)
+        }));
+        callback(notifications);
+      },
+      // e.g. right after logging out: log it quietly instead of an uncaught error
+      err => console.warn('Notification listener stopped:', err.message)
+    );
   }
 
   async dueDateNotificationExists(
     taskId: string,
-    type: 'due_today' | 'overdue'
+    type: 'due_today' | 'overdue',
+    userId?: string
   ): Promise<boolean> {
     const today = new Date().toISOString().slice(0, 10);
-    const q = query(
-      collection(db, 'notifications'),
+
+    // Firestore rules only let you read your OWN notifications, so the query itself must
+    // say so. Without this filter it is rejected with "Missing or insufficient permissions".
+    const uid = userId ?? getAuth().currentUser?.uid;
+
+    const filters = [
       where('taskId', '==', taskId),
       where('type', '==', type),
       where('sentDate', '==', today)
-    );
+    ];
+    const q = uid
+      ? query(collection(db, 'notifications'), ...filters, where('userId', '==', uid))
+      : query(collection(db, 'notifications'), ...filters);
     const snapshot = await getDocs(q);
     return !snapshot.empty;
   }
@@ -264,4 +299,78 @@ export class FirebaseService {
       message: { subject, html: body }
     });
   }
+
+  // ---------- TASK CHAT (tasks/{taskId}/messages) ----------
+
+  // imports needed: addDoc, collection, doc, getDoc, onSnapshot, orderBy, query, serverTimestamp
+
+async addTaskMessage(
+  taskId: string,
+  msg: { senderId: string; senderName: string; text: string }
+) {
+  await addDoc(collection(db, 'tasks', taskId, 'messages'), {
+    senderId: msg.senderId,
+    senderName: msg.senderName,
+    text: msg.text.slice(0, 1000),
+    createdAt: serverTimestamp()
+  });
+  // fire-and-forget: a failed alert must never block the chat
+  this.notifyChatRecipients(taskId, msg).catch(e =>
+    console.error('Chat notification failed:', e)
+  );
+}
+
+private async notifyChatRecipients(
+  taskId: string,
+  msg: { senderId: string; senderName: string; text: string }
+) {
+  const snap = await getDoc(doc(db, 'tasks', taskId));
+  if (!snap.exists()) return;
+  const t = snap.data() as any;
+
+  const people = new Set<string>(
+    [...(t.assigneeIds?.length ? t.assigneeIds : [t.assigneeId]), t.assignerId].filter(Boolean)
+  );
+  people.delete(msg.senderId);
+
+  const preview = msg.text.length > 60 ? msg.text.slice(0, 60) + '…' : msg.text;
+  for (const uid of people) {
+    await this.addNotification({
+      userId: uid,
+      title: 'New chat message',
+      message: `${msg.senderName} wrote on "${t.details}": ${preview}`,
+      read: false,
+      createdAt: new Date().toISOString(),
+      taskId,
+      type: 'chat'
+    });
+  }
+}
+listenToTaskMessages(
+  taskId: string,
+  onData: (msgs: ChatMessage[]) => void,
+  onError?: (err: any) => void
+) {
+  console.log('[chat] listening on', `tasks/${taskId}/messages`);
+  
+  const q = query(collection(db, 'tasks', taskId, 'messages'));
+  const ms = (v: any) =>
+    v?.toMillis ? v.toMillis() : v ? new Date(v).getTime() : Date.now();
+
+  return onSnapshot(
+    q,
+    snap => {
+      console.log('[chat] snapshot', snap.size, 'docs, fromCache:', snap.metadata.fromCache);
+      const msgs = snap.docs
+        .map(d => ({ id: d.id, ...d.data() } as any))
+        .sort((a, b) => ms(a.createdAt) - ms(b.createdAt));
+      onData(msgs as ChatMessage[]);
+    },
+    err => {
+      console.error('[chat] listen failed:', err);
+      onError?.(err);
+    }
+  );
+}
+
 }

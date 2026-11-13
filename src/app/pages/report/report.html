@@ -1,10 +1,11 @@
 <div class="admin-calendar">
   <!-- CONTROLS BAR -->
   <div class="controls-bar">
- <div class="page-header">
-    <button class="back-btn" (click)="goBack()">← Back</button>
-    <h3>Performance Reports</h3>
-  </div>
+    <div class="page-header">
+      <button class="back-btn" (click)="goBack()">← Back</button>
+      <h3>Performance Reports</h3>
+    </div>
+
     <div class="control-group">
       <label class="control-label">Global Benchmark (hrs/wk)</label>
       <input
@@ -37,11 +38,14 @@
     <div class="control-group control-actions">
       <button class="btn-apply" (click)="applyFilters()">Apply</button>
       <button class="btn-clear" (click)="clearFilters()">Clear</button>
+      <button class="btn-export" type="button" (click)="exportPdf()">Export PDF</button>
     </div>
 
   </div>
 
   <!-- LEADERBOARD -->
+   <div class="calendar-table-wrapper">
+
   <table class="calendar-table">
     <thead>
       <tr>
@@ -53,19 +57,15 @@
         <th>Avg Quality</th>
         <th>Avg Speed</th>
         <th>Benchmark (hrs/wk)</th>
-        <th>Detail</th>
         <th>Auto-Accepts</th>
-        
+        <th>Detail</th>
       </tr>
     </thead>
     <tbody>
       <ng-container *ngFor="let report of pagedReports; let i = index">
         <tr class="leaderboard-row" [class.selected-row]="selectedUserId === report.user.id">
           <td style="text-align:center; font-weight:700; color:#4b5bbf;">
-            {{ (currentPage - 1) * pageSize + i === 0 ? '1' :
-               (currentPage - 1) * pageSize + i === 1 ? '2' :
-               (currentPage - 1) * pageSize + i === 2 ? '3' :
-               (currentPage - 1) * pageSize + i + 1 }}
+            {{ (currentPage - 1) * pageSize + i + 1 }}
           </td>
           <td>
             <div class="task-title">{{ report.user.name }}</div>
@@ -97,10 +97,10 @@
             />
           </td>
           <td style="text-align:center;">
-  <span [class]="(report.user.autoAcceptCount ?? 0) > 0 ? 'warn-count' : 'ok-count'">
-    {{ report.user.autoAcceptCount ?? 0 }}
-  </span>
-</td>
+            <span [class]="(report.user.autoAcceptCount ?? 0) > 0 ? 'warn-count' : 'ok-count'">
+              {{ report.user.autoAcceptCount ?? 0 }}
+            </span>
+          </td>
           <td style="text-align:center;">
             <button (click)="selectUser(report.user.id!)">
               {{ selectedUserId === report.user.id ? 'Close' : 'View' }}
@@ -110,7 +110,7 @@
 
         <!-- DRILLDOWN ROW -->
         <tr *ngIf="selectedUserId === report.user.id">
-          <td colspan="9" class="drilldown-cell">
+          <td colspan="10" class="drilldown-cell">
             <div class="drilldown-container">
 
               <div class="drilldown-left">
@@ -159,13 +159,14 @@
       </ng-container>
 
       <tr *ngIf="filteredReports.length === 0">
-        <td colspan="9" style="text-align:center; padding:32px; color:#8fa3e6; font-size:1rem;">
+        <td colspan="10" style="text-align:center; padding:32px; color:#8fa3e6; font-size:1rem;">
           No results found for the selected filters.
         </td>
       </tr>
 
     </tbody>
   </table>
+  </div>
 
   <!-- PAGINATION -->
   <div class="pagination-bar">
@@ -173,12 +174,12 @@
     <div class="page-size-control">
       <label class="control-label">Rows per page</label>
       <select class="control-select small" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
-        <option *ngFor="let s of pageSizeOptions" [value]="s">{{ s }}</option>
+        <option *ngFor="let s of pageSizeOptions" [ngValue]="s">{{ s }}</option>
       </select>
     </div>
 
     <div class="page-info">
-      {{ (currentPage - 1) * pageSize + 1 }}–{{ Math.min(currentPage * pageSize, filteredReports.length) }}
+      {{ filteredReports.length === 0 ? 0 : (currentPage - 1) * pageSize + 1 }}–{{ Math.min(currentPage * pageSize, filteredReports.length) }}
       of {{ filteredReports.length }}
     </div>
 

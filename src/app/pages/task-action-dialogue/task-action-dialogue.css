@@ -195,3 +195,60 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+.link-box { background: #f0f2ff; border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; font-size: 0.9rem; color: #3c4ba8; }
+.link-box a { color: #5a67d8; font-weight: 600; }
+.member-note { margin: 8px 0 0; white-space: pre-wrap; }
+/* Append to the bottom of task-action-dialogue.css (AI review panel) */
+
+.dialog-container .ai-box {
+  background: #f5f3ff;
+  border-left: 4px solid #8fa3e6;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  font-size: 0.88rem;
+  color: #3c4ba8;
+}
+.dialog-container .ai-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.dialog-container .ai-title { font-weight: 700; font-size: 0.95rem; }
+.dialog-container .ai-tag {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  background: #e6ebfa; color: #4b5bbf; border-radius: 8px; padding: 2px 8px;
+}
+.dialog-container .ai-timing { margin-bottom: 10px; line-height: 1.4; }
+.dialog-container .ai-timing strong { display: block; margin-top: 2px; }
+
+.dialog-container .ai-key p { margin: 0 0 8px; }
+.dialog-container .ai-key .field-input { width: 100%; box-sizing: border-box; margin-bottom: 8px; }
+
+.dialog-container .ai-summary { margin: 0 0 8px; line-height: 1.45; }
+.dialog-container .ai-scores { display: flex; gap: 8px; margin-bottom: 8px; }
+.dialog-container .ai-chip {
+  background: #a5b5f0; color: #fff; font-weight: 700; font-size: 0.8rem;
+  border-radius: 12px; padding: 3px 12px;
+}
+.dialog-container .ai-list { margin-bottom: 6px; }
+.dialog-container .ai-list ul { margin: 2px 0 0; padding-left: 18px; }
+.dialog-container .ai-list li { margin-bottom: 2px; }
+
+.dialog-container .ai-actions { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+.dialog-container .ai-error { color: #c62828; margin: 8px 0; }
+.dialog-container .ai-note { margin-top: 10px; font-size: 0.78rem; color: #8fa3e6; line-height: 1.35; }
+
+/* Buttons: reset so global button styles can't stretch them */
+.dialog-container .ai-btn {
+  width: auto; min-width: 0; height: auto; margin: 0;
+  padding: 8px 16px;
+  background: #8fa3e6; color: #fff;
+  border: none; border-radius: 8px; box-shadow: none;
+  font-size: 0.88rem; font-weight: 600; cursor: pointer;
+}
+.dialog-container .ai-btn:hover:not(:disabled) { background: #7388d6; transform: none; }
+.dialog-container .ai-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.dialog-container .ai-link {
+  width: auto; min-width: 0; height: auto; margin: 0; padding: 0;
+  background: none; border: none; box-shadow: none;
+  color: #5a67d8; font-size: 0.85rem; font-weight: 600; text-decoration: underline; cursor: pointer;
+}
+.dialog-container .ai-link:hover { background: none; transform: none; }

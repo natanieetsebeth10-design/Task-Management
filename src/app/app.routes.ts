@@ -77,6 +77,11 @@ export const routes: Routes = [
   loadComponent: () => import('./pages/admin-performance/admin-performance').then(m => m.AdminPerformanceComponent),
   canActivate: [authGuard]
 },
+{
+  path: 'chats',
+  loadComponent: () => import('./pages/chats/chats-page').then(m => m.ChatsPageComponent),
+  canActivate: [authGuard]
+},
   // Catch-all
   { path: '**', redirectTo: 'home' }
 ];
